@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Message } from 'element-ui';
 
 // 创建axios，赋给变量service
 // http://www.web-jshtml.cn/productApi
@@ -6,7 +7,9 @@ import axios from 'axios'
 const BASEURL = process.env.NODE_ENV === 'production' ? '' : '/devApi';
 const service = axios.create({
   baseURL: BASEURL,     // http://www.web-jshtml.cn/productApi
-  timeout: 1000,
+  timeout: 15000,    // 超时
+  // 网络请求接口，假设 5000
+  // 1000 2000
 });
 
 // 添加请求拦截器
@@ -21,6 +24,19 @@ service.interceptors.request.use(function (config) {
 // 添加响应拦截器
 service.interceptors.response.use(function (response) {
     // 对响应数据做点什么
+    let data = response.data
+
+    if (data.resCode !== 0) {
+        Message.error(data.message);
+        return Promise.reject(data);
+        
+    }else{
+        return response;
+        // return Promise.reslove(data);
+    }
+
+    console.log(response)
+
     return response;
 }, function (error) {
     // 对响应错误做点什么
