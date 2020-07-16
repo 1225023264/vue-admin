@@ -44,7 +44,7 @@
 <script>
 /**base64、md5、sha1 */
 import sha1 from "js-sha1";
-import { Message } from "element-ui";
+import { Message, Link } from "element-ui";
 import { GetSms, Register, Login } from "@/api/login"
 import { reactive, ref, isRef, toRefs, onMounted } from "@vue/composition-api"
 import { stripscript, validateEmail, validatePass, validateVCode } from "@/utils/validate";
@@ -289,14 +289,18 @@ export default {
        * 登录
        */
       const login =(() => {
-        let requestData = {
+        let repuestData = {
               username: ruleForm.username,
               password: sha1(ruleForm.password),
               code: ruleForm.code
             }
-        Login(requestData).then(response => {
+        Login(repuestData).then(response => {
           console.log('登录成功')
           console.log(response)
+          //页面跳转
+          root.$router.push({
+            name: 'Console'
+          })
         }).catch(error => {
           
         });
@@ -356,7 +360,7 @@ export default {
       const clearCountDown = (() => {
         // 还原验证码按钮默认状态
         updataButtonStatus({
-          status : true,
+          status : false,
           text : '获取验证码'
         })
         // codeButtonStatus.status = false
