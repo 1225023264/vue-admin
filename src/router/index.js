@@ -2,6 +2,9 @@ import Vue from "vue";
 import Router from "vue-router";
 Vue.use(Router);
 
+// 引入布局组件     文件下的index文件会默认自动读取，如果文件下没有会报错
+import Layout from '@/views/Layout'
+
 export default new Router({
   routes: [
     {
@@ -26,9 +29,10 @@ export default new Router({
       name: "Console",
       redirect: "index",
       meta: {
-        name: "控制台"
+        name: "控制台",
+        icon: 'console'
       },
-      component: () => import("../views/Layout/index.vue"),
+      component: Layout,
       children: [
         {
           path: "/index",
@@ -44,9 +48,10 @@ export default new Router({
       path: "/info",
       name: "Info",
       meta: {
-        name: "信息管理"
+        name: "信息管理",
+        icon: 'info'
       },
-      component: () => import("../views/Layout/index.vue"),
+      component: Layout,
       children: [
         {
           path: "/infoIndex",
@@ -73,9 +78,10 @@ export default new Router({
       path: "/user",
       name: "User",
       meta: {
-        name: "用户管理"
+        name: "用户管理",
+        icon: 'user'
       },
-      component: () => import("../views/Layout/index.vue"),
+      component: Layout,
       children: [
         {
           path: "/userIndex",
