@@ -5,6 +5,26 @@
 }
 .el-menu {border: solid 0px !important;}
 // 修改一级菜单样式
-li.el-submenu{
+li.el-submenu {
     &.is-active.is-opened .el-submenu__title{background-color: $mainCcolor !important;}
+}
+
+.close {
+    .el-submenu{
+        &.is-opened{
+            > .el-submenu__title{
+                background-color: $mainCcolor !important;
+            }
+        }
+    }
+
+}
+
+.el-menu--vertical{
+    .el-menu{ background-color: #344a5f !important;}
+    .el-menu-item{ line-height: 56px;}
+    .el-menu-item:hover{
+        background-color: $mainCcolor !important;
+    }
+
 }

@@ -285,6 +285,7 @@ export default {
         });
 
       }) ;
+/*************************************登*****录************************************************************************* */
       /**
        * 登录
        */
@@ -294,16 +295,14 @@ export default {
               password: sha1(ruleForm.password),
               code: ruleForm.code
             }
-        Login(repuestData).then(response => {
-          console.log('登录成功')
-          console.log(response)
-          //页面跳转
-          root.$router.push({
-            name: 'Console'
-          })
-        }).catch(error => {
-          
-        });
+            root.$store.dispatch('app/login', repuestData,repuestData).then(response => {
+            console.log('登录成功')
+            console.log(response)
+            //页面跳转
+            root.$router.push({
+              name: 'Console'
+            })
+          }).catch(error => {});
       });
       /**
        * 注册

@@ -5,6 +5,11 @@ Vue.use(Router);
 // 引入布局组件     文件下的index文件会默认自动读取，如果文件下没有会报错
 import Layout from '@/views/Layout'
 
+const originalPush = Router.prototype.push
+Router.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 export default new Router({
   routes: [
     {

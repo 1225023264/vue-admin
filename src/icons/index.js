@@ -12,7 +12,7 @@ Vue.component('svg-icon', SvuIcon);
 const req = require.context('./svg', false, /\.svg$/) // 正则里面表示结尾, 读取结尾为.svg的文件
 // es6
 const requireAll = (requireContext) => {
-  console.log(requireContext.keys().map(requireContext))
+  // console.log(requireContext.keys().map(requireContext))
   return requireContext.keys().map(requireContext)
 }
 
