@@ -1,5 +1,5 @@
 import { Login } from "@/api/login";
-import { setToKen, setUserName , getUserName } from "@/utils/app";
+import { setToKen, removeToKen, removeUserName, setUserName , getUserName } from "@/utils/app";
 const state = {
     isCollapse: JSON.parse(sessionStorage.getItem('isCollapse')) || false,
     // isCollapse: localStorage.getItem('isCollapse') || false
@@ -26,6 +26,7 @@ const mutations = {// 必须的 同步 没有回调处理事情
     SET_USERNAME(state,value){
         state.username = value
     }
+
 }
 const actions = {  // 异步 可以回调处理事情
     login({ commit }, repuestData) {
@@ -48,6 +49,15 @@ const actions = {  // 异步 可以回调处理事情
             }).catch(error => {
                 reject(error)
             })
+        })
+    },
+    exit({commit}){
+        return new Promise((resolve, reject) => {
+            removeToKen();
+            removeUserName();
+            commit('SET_TOKEN', '');
+            commit('SET_USERNAME', '');
+            resolve();
         })
     }
 

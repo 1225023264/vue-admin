@@ -1,6 +1,7 @@
 import router from "./index";
+import store from "../store/index";
 
-import { getToken } from "@/utils/app";
+import { getToken, removeToKen, removeUserName } from "@/utils/app";
 
 const whiteRouter = ['/login'];     // indexOf方法, 判断数组中是否存在指定的某个对象,   如果不存在, 则返回-1
 
@@ -8,7 +9,17 @@ const whiteRouter = ['/login'];     // indexOf方法, 判断数组中是否存�
 router.beforeEach((to, form, next) => {
     // console.log(to)     // index
     if (getToken()) {
-        next();
+        console.log(to)
+        if (to.path === '/login') {
+            removeToKen();
+            removeUserName();
+            store.commit("app/SET_TOKEN",'');
+            store.commit("app/SET_USERNAME",'');
+            next();
+        } else {
+            next();
+        }
+
         /**
          * 1、 to = /console
          * 2、 to = /index
