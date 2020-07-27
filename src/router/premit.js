@@ -9,7 +9,7 @@ const whiteRouter = ['/login'];     // indexOf方法, 判断数组中是否存�
 router.beforeEach((to, form, next) => {
     // console.log(to)     // index
     if (getToken()) {
-        console.log(to)
+        // console.log(to)
         if (to.path === '/login') {
             removeToKen();
             removeUserName();
@@ -25,7 +25,7 @@ router.beforeEach((to, form, next) => {
          * 2、 to = /index
          */
         // 路由的动态添加,分配菜单,每个角色分配不同的菜单
-        console.log('存在');
+        // console.log('存在');
     }else{
         // next('/login')   // 路由指向
         if (whiteRouter.indexOf(to.path) !== -1 ) {     // 存在

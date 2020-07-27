@@ -18,7 +18,7 @@ export function removeToKen(toKen) {
 }
 
 export function setUserName(value) {
-    return cookie.set('username', value);
+    return cookie.set(usernameKey, value);
 }
 
 export function getUserName() {
