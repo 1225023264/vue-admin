@@ -3,14 +3,14 @@
     <el-row :gutter="14">
       <el-col :span="4">
         <div class="label-wrap category">
-          <label for>类型：</label>
+          <label for>分类：</label>
           <div class="warp-content">
             <el-select v-model="category_value" placeholder="请选择" style=" width: 100%;">
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in options.category"
+                :key="item.id"
+                :label="item.category_name"
+                :value="item.id"
               ></el-option>
             </el-select>
           </div>
@@ -18,7 +18,7 @@
       </el-col>
       <el-col :span="7">
         <div class="label-wrap date">
-          <label for>日期：&nbsp;&nbsp;</label>
+          <label for>日 期：&nbsp;&nbsp;</label>
           <div class="warp-content">
             <el-date-picker
               style=" width:100%;"
@@ -101,13 +101,16 @@
   </div>
 </template>
 <script>
+import { GetCategory } from "@/api/news";
 import DialogInfo from "./dialog/info";
 import { global } from "@/utils/global_V3.0";
-import { reactive, ref, watchEffect } from "@vue/composition-api";
+// import { common } from "@/api/common";
+import { reactive, ref, watch, onMounted } from "@vue/composition-api";
 export default {
   name: "infoIndex",
   components: { DialogInfo },
   setup(props, { root }) {
+    // const { getInfoCategory, categoryItem } = common();
     const { str: aaa, confirm: cAAA } = global();
     /**
      * 数据
@@ -120,20 +123,9 @@ export default {
     const search_keyWork = ref('');
 
 
-    const options = reactive([
-      {
-        value: 1,
-        label: "国际信息"
-      },
-      {
-        value: 2,
-        label: "国内信息"
-      },
-      {
-        value: 3,
-        label: "行业信息"
-      }
-    ]);
+    const options = reactive({
+      category:[]
+    });
     // 搜索关键字
     const search_option = reactive([
       { value: "id", label: "ID" },
@@ -200,6 +192,30 @@ export default {
       console.log(value)
     }
 
+    const getInfoCategory = () => {
+      // vueX
+      root.$store.dispatch('common/getInfoCategory').then(response => {
+        // console.log(response)
+        options.category = response
+      })
+    }
+
+    /**
+     * 生命周期
+     */
+    onMounted(() => {
+      // vue3.0
+      // getInfoCategory()
+      // vueX actions
+      getInfoCategory()
+    })
+    /**
+     * watch 监听
+     */
+    watch(() => categoryItem.item, (value) => {
+      options.category = value
+    })
+    
     return {
       // ref
       date_value,
