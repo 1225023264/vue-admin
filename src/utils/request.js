@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from 'axios';
 import { Message } from 'element-ui';
 import { getToken, getUserName } from "@/utils/app";
 

@@ -50,7 +50,7 @@
   </div>
 </template>
 <script>
-import { AddristCategory, GetCategory, DeleteCategory, EditCategory } from "@/api/news";
+import { AddFristCategory, GetCategory, DeleteCategory, EditCategory } from "@/api/news";
 import { reactive, ref, onMounted, watch } from "@vue/composition-api";
 import { global } from "@/utils/global_V3.0"; 
 import { common } from "@/api/common";
@@ -107,7 +107,7 @@ export default {
       // 按钮加载状态
       submit_button_loading.value = true
 
-      AddristCategory({ categoryName: form.categoryName }).then(response => {
+      AddFristCategory({ categoryName: form.categoryName }).then(response => {
           let data = response.data;
           if (data.resCode === 0) {
             root.$message({
