@@ -18,7 +18,6 @@ export function AddInfo(data) {
         method: "post",
         url: "/news/add/",
         data
-        // data: data,左边的data是变量名(key)后台接收的。右边的Data是接收的参数。 如果两者都是同名的情况下，可以单独写成一个即可（ES6的写法)
 
     })
 }
@@ -26,12 +25,27 @@ export function AddInfo(data) {
  * 编辑
  */
 
+export function EdidInfo(data) {
+    return service.request({
+        method: "post",
+        url: "/news/editInfo/",
+        data
+
+    })
+}
 /**
  * 删除
  */
+export function DeleteInfo(data) {
+    return service.request({
+        method:"post",
+        url:"/news/deleteInfo/",
+        data
+    })
+}
 
 /**
- * 一级分类添加
+ * 一级分类添加 	
  */
 
 export function AddFristCategory(data) {
@@ -39,7 +53,19 @@ export function AddFristCategory(data) {
         method: "post",
         url: "/news/addFirstCategory/",
         data
-        // data: data,左边的data是变量名(key)后台接收的。右边的Data是接收的参数。 如果两者都是同名的情况下，可以单独写成一个即可（ES6的写法)
+
+    })
+}
+
+/**
+ * 子级分类添加 	
+ */
+
+export function AddChildrenCategory(data) {
+    return service.request({
+        method: "post",
+        url: "/news/addChildrenCategory/",
+        data
 
     })
 }
@@ -54,7 +80,20 @@ export function GetCategory(data) {
         method: "post",
         url: "/news/getCategory/",
         data
-        // data: data,左边的data是变量名(key)后台接收的。右边的Data是接收的参数。 如果两者都是同名的情况下，可以单独写成一个即可（ES6的写法)
+
+    })
+}
+
+
+/**
+ * 获取分类
+ */
+
+export function GetCategoryAll(data) {
+    return service.request({
+        method: "post",
+        url: "/news/getCategoryAll/",
+        data
 
     })
 }
@@ -68,7 +107,6 @@ export function DeleteCategory(data) {
         method: "post",
         url: "/news/deleteCategory/",
         data
-        // data: data,左边的data是变量名(key)后台接收的。右边的Data是接收的参数。 如果两者都是同名的情况下，可以单独写成一个即可（ES6的写法)
 
     })
 }
@@ -82,7 +120,6 @@ export function EditCategory(data) {
         method: "post",
         url: "/news/editCategory/",
         data
-        // data: data,左边的data是变量名(key)后台接收的。右边的Data是接收的参数。 如果两者都是同名的情况下，可以单独写成一个即可（ES6的写法)
 
     })
 }

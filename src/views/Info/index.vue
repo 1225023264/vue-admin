@@ -24,6 +24,8 @@
               style=" width:100%;"
               v-model="date_value"
               type="datetimerange"
+              format="yyyy 年 MM 月 dd 日"
+              value-format="yyyy-MM-dd HH:mm:ss"
               align="right"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
@@ -34,7 +36,7 @@
       </el-col>
       <el-col :span="3">
         <div class="label-wrap key-work">
-          <label for>关键字：&nbsp;&nbsp;</label>
+          <label for="">关键字：&nbsp;&nbsp;</label>
           <div class="warp-content">
             <el-select v-model="search_key" style="width: 100%;">
               <el-option
@@ -51,7 +53,7 @@
         <el-input v-model="search_keyWork" placeholder="请输入内容" style="width: 100%;"></el-input>
       </el-col>
       <el-col :span="2">
-        <el-button type="danger" style=" width: 100%;">搜索</el-button>
+        <el-button type="danger" style=" width: 100%;" @click="getList">搜索</el-button>
       </el-col>
       <el-col :span="3">
         <div class="replace">|</div>
@@ -63,16 +65,16 @@
 
     <!-- 表格数据-->
     <div class="black-space-30"></div>
-    <el-table :data="table_data.item" border style="width: 100%">
+    <el-table :data="table_data.item" border v-loading="loadingData" @selection-change="handleSelectionChange" style="width: 100%">
       <el-table-column type="selection" width="45"></el-table-column>
       <el-table-column prop="title" label="标题" width="830"></el-table-column>
-      <el-table-column prop="categoryId" label="类别" width="130"></el-table-column>
-      <el-table-column prop="createDate" label="日期" width="237"></el-table-column>
+      <el-table-column prop="categoryId" label="类别" width="130" :formatter="toCategory"></el-table-column>
+      <el-table-column prop="createDate" label="日期" width="237" :formatter="toData"></el-table-column>
       <el-table-column prop="user" label="管理员" width="115"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="deleteItem">删除</el-button>
-          <el-button type="success" size="mini"  @click="dialog_info = true">编辑</el-button>
+          <el-button type="danger" size="mini" @click="deleteItem(scope.row.id)">删除</el-button>
+          <el-button type="success" size="mini"  @click="editInfo(scope.row.id)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -96,30 +98,40 @@
     </el-row>
 
     <!-- 新增弹窗 -->
-    <DialogInfo :flag.sync="dialog_info" :category="options.category"/>
+    <DialogInfo :flag.sync="dialog_info" :category="options.category" @getListAdd="getList"/>
+
+    <!-- 修改弹窗 -->
+    <DialogEditInfo :flag.sync="dialog_info_edit" :id="infoId" :category="options.category" @getListEmit="getList" /> <!-- @getListEmit="GetList" 左边当做一个属性，子组件内的方法 右边的是传值，代表要调用的东西-->
 
   </div>
 </template>
 <script>
-import { GetCategory, GetList } from "@/api/news";
+import { GetCategory, GetList, DeleteInfo } from "@/api/news";
 import DialogInfo from "./dialog/info";
+import DialogEditInfo from "./dialog/edit";
 import { global } from "@/utils/global_V3.0";
 import { reactive, ref, watch, onMounted } from "@vue/composition-api";
+import { timestampToTime } from "@/utils/common";
 export default {
   name: "infoIndex",
-  components: { DialogInfo },
+  components: { DialogInfo, DialogEditInfo },
   setup(props, { root }) {
-    const { str: aaa, confirm: cAAA } = global();
+    const { str: aaa, confirm } = global();
     /**
      * 数据
      */
     //  信息弹窗标记
     const dialog_info = ref(false);   // true、false
+    const dialog_info_edit = ref(false);   // true、false
     const search_key = ref('id');
     const category_value = ref('');
     const date_value = ref('');
     const search_keyWork = ref('');
     const total = ref(0);
+    const deleteInfoId = ref('');
+    const infoId = ref("");
+    // loading
+    const loadingData = ref(false);
 
 
     const options = reactive({
@@ -152,44 +164,83 @@ export default {
       getList()
     };
 
-    const deleteItem = () => {
-      cAAA({
-        content: "确认删除当前信息，确认后将无法恢复！！",
-        tip: '警告',
-        fn: confirmDelete, 
-        id: '22222'
-      })
+    /**
+     * 搜索条件处理
+     */
+    const formatData = () => {
+      let requestData = {
+        pageNumber: page.pageNumber,
+        pageSize: page.pageSize
+      };
+      // 分类ID
+      if (category_value.value) { requestData.categoryId = category_value.value }
+      // 日期
+      if (date_value.value.length > 0) {
+        requestData.startTiem = date_value.value[0]
+        requestData.endTime = date_value.value[1]
+      }
+      // 关键字
+      if (search_keyWork.value) {
+        requestData[search_key.value] = search_keyWork.value;
+      }
+      return requestData;
+    }
+
+    const editInfo = (id) => {
+      infoId.value = id;
+      dialog_info_edit.value = true;
     }
 
     const getList = () => {
-      let requestData = {
-        categoryId: '',
-        startTiem: '',
-        endTime: '',
-        title: '',
-        id: '',
-        pageNumber: page.pageNumber,
-        pageSize: page.pageSize
-      }
+      // 单独处理数据
+      let requestData = formatData();
+     
+      // 加载状态
+      loadingData.value = true;
+
       GetList(requestData).then(response => {
         let data = response.data.data
         // 更新数据
         table_data.item = data.data
         // 页面统计数据
         total.value = data.total
+        // 加载状态 
+        loadingData.value = false;
+      }).catch(error => {
+        loadingData.value = false;
+      })
+    }
+    /**
+     * 删除数据
+     */
+    const deleteItem = (id) => {
+      deleteInfoId.value = [id];
+      confirm({
+        content: "确认删除当前信息，确认后将无法恢复！！",
+        tip: '警告',
+        fn: confirmDelete
       })
     }
 
     const deleteAll = () => {
-      cAAA({
+      if (!deleteInfoId.value || deleteInfoId.value.length == 0) {
+        root.$message({
+          message: "请选择要删除的数据！！",
+          type: "error"
+        })
+        return false;
+      }
+      confirm({
         content: "确认删除选择的数据，确认后将无法恢复！！",
         type: '警告',
-        fn: confirmDelete,
-        id: '111111'
+        fn: confirmDelete
       })
     }
     const confirmDelete = (value) => {
-      console.log(value)
+      DeleteInfo({id: deleteInfoId.value}).then(response => {
+        deleteInfoId.value = '';
+        getList()
+      })
     }
 
     const getInfoCategory = () => {
@@ -200,6 +251,20 @@ export default {
       })
     }
 
+    const toData = (row, column, cellValue, index) => {
+      return timestampToTime(row.createDate);
+    }
+
+    const toCategory = (row) => {
+      // 调用一个函数，返回一个新的值，替换原始值
+      let categoryId = row.categoryId;
+      let categoryData = options.category.filter(item => item.id == categoryId)[0];
+      return categoryData.category_name;
+    }
+    const handleSelectionChange = (val) =>{
+      let id = val.map(item => item.id);
+      deleteInfoId.value = id
+    }
     /**
      * 生命周期
      */
@@ -218,6 +283,9 @@ export default {
       dialog_info,
       category_value,
       total,
+      loadingData,
+      dialog_info_edit,
+      infoId,
       // reactive
       table_data,
       options,
@@ -226,7 +294,12 @@ export default {
       handleSizeChange,
       handleCurrentChange,
       deleteItem,
-      deleteAll
+      deleteAll,
+      toData,
+      toCategory,
+      handleSelectionChange,
+      getList,
+      editInfo
     };
   }
 };

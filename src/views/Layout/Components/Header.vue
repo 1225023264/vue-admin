@@ -5,7 +5,7 @@
     </div>
     <div class="pull-right">
       <div class="user-info pull-left">
-        <img src="../../../assets/images/face.jpg" alt />
+        <img src="../../../assets/images/face.png" alt />
         {{username}}
       </div>
       <div class="header-icon pull-left" @click="exit">
@@ -78,8 +78,8 @@ export default {
   }
   img {
     display: inline-block;
-    margin-bottom: -12px;
-    margin-right: 18px;
+    margin-bottom: -18px;
+    margin-right: 13px;
     border-radius: 50px;
   }
 }
