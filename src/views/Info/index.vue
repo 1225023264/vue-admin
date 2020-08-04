@@ -3,7 +3,7 @@
     <el-row :gutter="14">
       <el-col :span="4">
         <div class="label-wrap category">
-          <label for>分类：</label>
+          <label for>分 类：</label>
           <div class="warp-content">
             <el-select v-model="category_value" placeholder="请选择" style=" width: 100%;">
               <el-option
@@ -36,7 +36,7 @@
       </el-col>
       <el-col :span="3">
         <div class="label-wrap key-work">
-          <label for="">关键字：&nbsp;&nbsp;</label>
+          <label for="">关 键 字：&nbsp;&nbsp;</label>
           <div class="warp-content">
             <el-select v-model="search_key" style="width: 100%;">
               <el-option
@@ -75,7 +75,11 @@
         <template slot-scope="scope">
           <el-button type="danger" size="mini" @click="deleteItem(scope.row.id)">删除</el-button>
           <el-button type="success" size="mini"  @click="editInfo(scope.row.id)">编辑</el-button>
-          <el-button type="success" size="mini"  @click="editInfo(scope.row.id)">编辑详情</el-button>
+          <!-- <router-link :to="{name: 'InfoDetailed', query:{ id: scope.row.id, title: scope.row.title  }}" class="margin-left-10"> -->
+          
+          <el-button type="success" size="mini" @click="detailed(scope.row)">编辑详情</el-button>
+
+          <!-- </router-link> -->
         </template>
       </el-table-column>
     </el-table>
@@ -192,6 +196,42 @@ export default {
       dialog_info_edit.value = true;
     }
 
+    /**
+     * 详情页
+     */
+    const detailed = (data) => {
+      // 预先存值
+      // root.$store.commit("infoDetailed/SET_ID", data.id);
+      // root.$store.commit("infoDetailed/SET_TITLE", data.title);
+
+      root.$store.commit("infoDetailed/UPDATE_STATE_VALUE", {
+        id: {
+          value: data.id,
+          sessionKey: "infoId",
+          session: true
+        },
+        title: {
+          value: data.title,
+          sessionKey: "infoTitle",
+          session: true
+        }
+      });
+
+
+
+      // 跳转页面
+      // root.$router.push({
+      //   path: `/InfoDetailed/${data.id}/${data.title}`
+      // })
+      root.$router.push({
+        name: "InfoDetailed",
+        params:{
+          id: data.id,
+          title: data.title
+        }
+      })
+    }
+
     const getList = () => {
       // 单独处理数据
       let requestData = formatData();
@@ -300,7 +340,8 @@ export default {
       toCategory,
       handleSelectionChange,
       getList,
-      editInfo
+      editInfo,
+      detailed
     };
   }
 };
