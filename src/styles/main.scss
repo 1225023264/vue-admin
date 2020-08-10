@@ -7,3 +7,8 @@
 .pull-right { float:right; }
 
 .black-space-30{ height: 30px;}
+
+// for循环定义 padding 偏移值
+@for $i from 1 through 110 {
+    .margin-left-#{$i} { margin-left: (1px * $i);}
+}

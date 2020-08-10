@@ -33,7 +33,7 @@ const actions = {  // 异步 可以回调处理事情
         return new Promise((resolve, reject) => {
             // 接口
             Login(repuestData).then((response) => {
-                console.log(response)
+                // console.log(response)
                 let data = response.data.data
                 // console.log(content);
                 // 普通的方式
