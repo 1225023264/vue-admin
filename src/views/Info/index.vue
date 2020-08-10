@@ -38,14 +38,15 @@
         <div class="label-wrap key-work">
           <label for="">关 键 字：&nbsp;&nbsp;</label>
           <div class="warp-content">
-            <el-select v-model="search_key" style="width: 100%;">
+            <SelectVue :config="data.configOption"/>
+            <!-- <el-select v-model="search_key" style="width: 100%;">
               <el-option
                 v-for="item in search_option"
                 :key="item.value"
                 :value="item.value"
                 :label="item.label"
               ></el-option>
-            </el-select>
+            </el-select> -->
           </div>
         </div>
       </el-col>
@@ -117,15 +118,22 @@ import DialogEditInfo from "./dialog/edit";
 import { global } from "@/utils/global_V3.0";
 import { reactive, ref, watch, onMounted } from "@vue/composition-api";
 import { timestampToTime } from "@/utils/common";
+// 组件
+import SelectVue from "@c/Select";
 export default {
   name: "infoIndex",
-  components: { DialogInfo, DialogEditInfo },
+  components: { DialogInfo, DialogEditInfo, SelectVue },
   setup(props, { root }) {
     const { str: aaa, confirm } = global();
     /**
      * 数据
      */
     //  信息弹窗标记
+    const data = reactive({
+      configOption:{
+        init: ["id", "title"]
+      },
+    });
     const dialog_info = ref(false);   // true、false
     const dialog_info_edit = ref(false);   // true、false
     const search_key = ref('id');
@@ -329,6 +337,7 @@ export default {
       dialog_info_edit,
       infoId,
       // reactive
+      data,
       table_data,
       options,
       search_option,
