@@ -31,7 +31,7 @@ const mutations = {// 必须的 同步 没有回调处理事情
     //     state.id = value
     //     //  Html5 本地储存
     //     sessionStorage.setItem('infoId', value);
-    //     console.log(state.id)
+    //     // console.log(state.id)
     // },
     // SET_TITLE(state, value){
     //     state.title = value

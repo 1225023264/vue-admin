@@ -300,6 +300,7 @@ export default {
       // 调用一个函数，返回一个新的值，替换原始值
       let categoryId = row.categoryId;
       let categoryData = options.category.filter(item => item.id == categoryId)[0];
+      // console.log(categoryData)
       return categoryData.category_name;
     }
     const handleSelectionChange = (val) =>{
