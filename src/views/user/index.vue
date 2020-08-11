@@ -23,19 +23,54 @@
         <el-button type="danger" class="pull-right">添加用户</el-button>
       </el-col>
     </el-row>
+    <div class="black-space-30"></div>
+    <TableVue :config="data.configTable" />
   </div>
 </template>
 <script>
 import { reactive, ref, watch, onMounted } from "@vue/composition-api";
 // 组件
 import SelectVue from "@c/Select";
+import TableVue from "@c/Table";
 export default {
   name: "userIndex",
-  components: { SelectVue },
+  components: { SelectVue, TableVue },
   setup(props) {
     const data = reactive({
       configOption: {
         init: ["name", "phone", "email"]
+      },
+      // table 组件配置参数
+      configTable: {
+        // 多选框
+        selection: true,
+        // 翻页记录checkbox
+        recordCheckbox: true,
+        // 表头
+        tHead: [
+          {
+            label: "邮箱/用户名",
+            field: "email",
+            width: 200
+          },
+          {
+            label: "真实姓名",
+            field: "name",
+            width: 120
+          },
+          {
+            label: "手机号",
+            field: "phone"
+          },
+          {
+            label: "地区",
+            field: "address"
+          },
+          {
+            label: "角色",
+            field: "role"
+          }
+        ]
       }
     });
 
