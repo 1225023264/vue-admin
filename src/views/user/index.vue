@@ -24,7 +24,15 @@
       </el-col>
     </el-row>
     <div class="black-space-30"></div>
-    <TableVue :config="data.configTable" />
+    <TableVue :config="data.configTable">
+      <template v-slot:status="slotData">
+        <el-switch v-model="slotData.data.name" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+      </template>
+      <template v-slot:operation="slotData">
+        <el-button size="small" type="danger" @click="operation(slotData.data)">删除</el-button>
+        <el-button size="small" type="success" @click="operation(slotData.data)">编辑</el-button>
+      </template>
+    </TableVue>
   </div>
 </template>
 <script>
@@ -45,7 +53,7 @@ export default {
         // 多选框
         selection: true,
         // 翻页记录checkbox
-        recordCheckbox: true,
+        // recordCheckbox: true,
         // 表头
         tHead: [
           {
@@ -69,13 +77,35 @@ export default {
           {
             label: "角色",
             field: "role"
+          },
+          {
+            label: "禁启用状态",
+            field: "status",
+            columnType: "slot",
+            slotName: "status"
+          },
+          {
+            label: "操作",
+            columnType: "slot",
+            slotName: "operation"
           }
-        ]
+        ],
+        // 请求接口URL
+        requestUrl: "asdasdasd"
+
       }
     });
 
+    /**
+     * methods
+     */
+    let operation = params => {
+      console.log(params);
+    };
+
     return {
-      data
+      data,
+      operation
     };
   }
 };
