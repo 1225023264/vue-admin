@@ -58,7 +58,7 @@ export default {
         tHead: [
           {
             label: "邮箱/用户名",
-            field: "email",
+            field: "title",
             width: 200
           },
           {
@@ -91,7 +91,14 @@ export default {
           }
         ],
         // 请求接口URL
-        requestUrl: "asdasdasd"
+        requestData: {
+          url: "getUserList",
+          method: "post",
+          data:{
+            pageNumber: 1,
+            pageSize: 10
+          }
+        }
 
       }
     });

@@ -309,6 +309,7 @@ export default {
       let categoryId = row.categoryId;
       let categoryData = options.category.filter(item => item.id == categoryId)[0];
       // console.log(categoryData)
+      if(!categoryData){ return false; }
       return categoryData.category_name;
     }
     const handleSelectionChange = (val) =>{

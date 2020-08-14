@@ -12,7 +12,7 @@
         </template>
       </el-table-column>
       <!-- function -->
-      <el-table-column :key="item.field" :prop="item.field" :label="item.label" :width="item.width" v-else-if="item.columnType === 'function'"></el-table-column>
+      <!-- <el-table-column :key="item.field" :prop="item.field" :label="item.label" :width="item.width" v-else-if="item.columnType === 'function'"></el-table-column> -->
       <!-- 文本数据渲染 -->
       <el-table-column :key="item.field" :prop="item.field" :label="item.label" :width="item.width" v-else></el-table-column>
     </template>
@@ -20,6 +20,8 @@
 </template>
 <script>
 import { reactive, onBeforeMount } from "@vue/composition-api";
+import { requestUrl } from "@/api/requestUrl";
+import { loadTableData } from "@/api/common";
 export default {
   name: "tableVue",
   props: {
@@ -34,48 +36,64 @@ export default {
       tableConfig: {
         selection: true,
         recordCheckbox: false,
+        requestData: {},
         tHead: []
       },
       tableData: [
-        {
-          email: "2016-05-02",
-          name: "王小虎",
-          phone: 13512345678,
-          address: "上海市普陀区金沙江路 1518 弄",
-          role: "超管"
-        },
-        {
-          email: "2016-05-04",
-          name: "王小虎",
-          phone: 13585207410,
-          address: "上海市普陀区金沙江路 1517 弄",
-          role: "超管"
-        }
+        // {
+        //   email: "2016-05-02",
+        //   name: "王小虎",
+        //   phone: 13512345678,
+        //   address: "上海市普陀区金沙江路 1518 弄",
+        //   role: "超管"
+        // },
+        // {
+        //   email: "2016-05-04",
+        //   name: "王小虎",
+        //   phone: 13585207410,
+        //   address: "上海市普陀区金沙江路 1517 弄",
+        //   role: "超管"
+        // }
       ]
     });
 
     /**
      * 方法 methods
      */
-    // 初始化table配置项
-    const initTableConfig = () => {
+    let loadData = () => {
+      let requestJson = data.tableConfig.requestData
+      let requestData = {
+        url: requestUrl[requestJson.url],
+        method: requestJson.method,
+        data: requestJson.data
+      }
+      // console.log(requestData)
+      loadTableData(requestData).then(response => {
+        let responseData = response.data.data.data
+        console.log(response.data.data.data)
+        if(responseData && responseData.length > 0) {
+          data.tableData = responseData
+        }
+      }).catch(error => {
+
+      })
+    }
+    // 初始化table配置项  // const 声明对象或数组
+    // 匹配相同的key，如果存在，则替换
+    let initTableConfig = () => {
       let configData = props.config;
+      let keys = Object.keys(data.tableConfig);
+      // console.log(keys)
       for (let key in configData) {
-        // console.log(key);
-        // console.log(configData[key]);
-        if (data.tableConfig[key]) {
+        if (keys.includes(key)) { // ["selection", "recordCheckbox", "requestUrl", "tHead"].includes("selection")
           data.tableConfig[key] = configData[key];
         }
-        // data.tableConfig[key] == data.tableConfig.tHead
-        // data.tableConfig[key] == data.tableConfig.selection
       }
-      //   console.log(props.config);
-      //   data.tableConfig.tHead = props.config.tHead;
-      //   data.tableConfig.selection = props.config.selection;
     };
 
     onBeforeMount(() => {
       initTableConfig();
+      loadData();
     });
 
     return {
