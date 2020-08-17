@@ -98,8 +98,16 @@ export default {
             pageNumber: 1,
             pageSize: 10
           }
-        }
+        },
+        paginationLayout: "total, sizes, prev, pager, next, jumper",
+        paginationShow: true
 
+
+
+        // pagination: {
+        //   show: true,
+        //   layout: "total, sizes, prev, pager, next, jumper"
+        // }
       }
     });
 

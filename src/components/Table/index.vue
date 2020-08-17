@@ -1,27 +1,52 @@
 <template>
-  <el-table :data="data.tableData" border style="width: 100%">
-    <!-- 多选框 -->
-    <el-table-column v-if="data.tableConfig.selection" type="selection" width="55"></el-table-column>
+  <div>
+    <el-table :data="data.tableData" border style="width: 100%">
+      <!-- 多选框 -->
+      <el-table-column v-if="data.tableConfig.selection" type="selection" width="55"></el-table-column>
 
-    <!-- 文本数据渲染 -->
-    <template v-for="item in data.tableConfig.tHead">
-      <!-- v-slot -->
-      <el-table-column :key="item.field" :prop="item.field" :label="item.label" :width="item.width" v-if="item.columnType === 'slot'">
-        <template slot-scope="scope">
-          <slot :name="item.slotName" :data="scope.row"></slot>
-        </template>
-      </el-table-column>
-      <!-- function -->
-      <!-- <el-table-column :key="item.field" :prop="item.field" :label="item.label" :width="item.width" v-else-if="item.columnType === 'function'"></el-table-column> -->
       <!-- 文本数据渲染 -->
-      <el-table-column :key="item.field" :prop="item.field" :label="item.label" :width="item.width" v-else></el-table-column>
-    </template>
-  </el-table>
+      <template v-for="item in data.tableConfig.tHead">
+        <!-- v-slot -->
+        <el-table-column
+          :key="item.field"
+          :prop="item.field"
+          :label="item.label"
+          :width="item.width"
+          v-if="item.columnType === 'slot'"
+        >
+          <template slot-scope="scope">
+            <slot :name="item.slotName" :data="scope.row"></slot>
+          </template>
+        </el-table-column>
+        <!-- function -->
+        <!-- <el-table-column :key="item.field" :prop="item.field" :label="item.label" :width="item.width" v-else-if="item.columnType === 'function'"></el-table-column> -->
+        <!-- 文本数据渲染 -->
+        <el-table-column
+          :key="item.field"
+          :prop="item.field"
+          :label="item.label"
+          :width="item.width"
+          v-else
+        ></el-table-column>
+      </template>
+    </el-table>
+    <el-pagination
+      v-if="data.tableConfig.paginationShow"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pageData.currentPage"
+      :page-sizes="pageData.pageSizes"
+      :page-size="pageData.pageSize"
+      :layout="data.tableConfig.paginationLayout"
+      :total="pageData.total"
+      background
+    ></el-pagination>
+  </div>
 </template>
 <script>
-import { reactive, onBeforeMount } from "@vue/composition-api";
-import { requestUrl } from "@/api/requestUrl";
-import { loadTableData } from "@/api/common";
+import { reactive, onBeforeMount, watch } from "@vue/composition-api";
+import { loadData } from "./tableLoadData";
+import { paginationHook } from "./paginationHook";
 export default {
   name: "tableVue",
   props: {
@@ -32,60 +57,73 @@ export default {
   },
   setup(props, { root }) {
     // console.log(props.config);
+    // 加载数据
+    const { tableData, tableLoadData } = loadData({ root });
+    // 页码
+    const { pageData, handleSizeChange, handleCurrentChange, totalCount } = paginationHook();
+    // 组件变量
     const data = reactive({
       tableConfig: {
         selection: true,
         recordCheckbox: false,
         requestData: {},
-        tHead: []
-      },
-      tableData: [
-        // {
-        //   email: "2016-05-02",
-        //   name: "王小虎",
-        //   phone: 13512345678,
-        //   address: "上海市普陀区金沙江路 1518 弄",
-        //   role: "超管"
-        // },
-        // {
-        //   email: "2016-05-04",
-        //   name: "王小虎",
-        //   phone: 13585207410,
-        //   address: "上海市普陀区金沙江路 1517 弄",
-        //   role: "超管"
+        tHead: [],
+        paginationLayout: "total, sizes, prev, pager, next, jumper",
+        paginationShow: true
+        // pagination: {
+        //   show: true,
+        //   layout: "total, sizes, prev, pager, next, jumper"
         // }
-      ]
+      },
+      tableData: []
+    });
+
+    /**
+     * vue3.0 业务逻辑的拆分及组合，还有复用性
+     */
+    /**
+     * watch 监听
+     */
+    // watch(() => tableData.item, (newValue, oldValue) => (data.tableData = newValue));
+    // 运用数组方法同时监听多个对象       做多件事情需要用{}处理
+    // 数据渲染
+    watch([
+        () => tableData.item,
+        () => tableData.total
+    ], ([tableData, total]) => {
+        data.tableData = tableData;
+        totalCount(total);
+        // console.log(total)
+    });
+
+    // 页码监听
+    watch([
+        () => pageData.currentPage,
+        () => pageData.pageSize
+    ], ([currentPage, pageSize]) => {
+      let requestData = data.tableConfig.requestData;
+      if (requestData.data) {
+        // console.log(requestData.data)
+        requestData.data.pageNumber = currentPage;
+        requestData.data.pageSize = pageSize;
+        tableLoadData(data.tableConfig.requestData);
+      }
+        // console.log(currentPage);
+        // console.log(pageSize);
     });
 
     /**
      * 方法 methods
      */
-    let loadData = () => {
-      let requestJson = data.tableConfig.requestData
-      let requestData = {
-        url: requestUrl[requestJson.url],
-        method: requestJson.method,
-        data: requestJson.data
-      }
-      // console.log(requestData)
-      loadTableData(requestData).then(response => {
-        let responseData = response.data.data.data
-        console.log(response.data.data.data)
-        if(responseData && responseData.length > 0) {
-          data.tableData = responseData
-        }
-      }).catch(error => {
-
-      })
-    }
     // 初始化table配置项  // const 声明对象或数组
     // 匹配相同的key，如果存在，则替换
-    let initTableConfig = () => {
+    const initTableConfig = () => {
       let configData = props.config;
       let keys = Object.keys(data.tableConfig);
       // console.log(keys)
       for (let key in configData) {
-        if (keys.includes(key)) { // ["selection", "recordCheckbox", "requestUrl", "tHead"].includes("selection")
+        if (keys.includes(key)) {
+          // ["selection", "recordCheckbox", "requestUrl", "tHead"].includes("selection")
           data.tableConfig[key] = configData[key];
         }
       }
@@ -93,11 +131,14 @@ export default {
 
     onBeforeMount(() => {
       initTableConfig();
-      loadData();
+      tableLoadData(data.tableConfig.requestData);
     });
 
     return {
-      data
+      data,
+      pageData, 
+      handleSizeChange, 
+      handleCurrentChange
     };
   }
 };
