@@ -1,11 +1,11 @@
 <template>
   <div>
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table :data="data.tableData" border style="width: 100%">
       <!-- 多选框 -->
-      <el-table-column v-if="tableConfig.selection" type="selection" width="55"></el-table-column>
+      <el-table-column v-if="data.tableConfig.selection" type="selection" width="55"></el-table-column>
 
       <!-- 文本数据渲染 -->
-      <template v-for="item in tableConfig.tHead">
+      <template v-for="item in data.tableConfig.tHead">
         <!-- v-slot -->
         <el-table-column
           :key="item.field"
@@ -31,26 +31,38 @@
       </template>
     </el-table>
     <el-pagination
-      v-if="tableConfig.paginationShow"
+      v-if="data.tableConfig.paginationShow"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="pageSizes"
-      :page-size="pageSize"
-      :layout="tableConfig.paginationLayout"
-      :total="total"
+      :current-page="pageData.currentPage"
+      :page-sizes="pageData.pageSizes"
+      :page-size="pageData.pageSize"
+      :layout="data.tableConfig.paginationLayout"
+      :total="pageData.total"
       background
     ></el-pagination>
   </div>
 </template>
 <script>
-import tableLoadData from "@/mixins/tableLoadData";
-import pagination from "@/mixins/pagination";
+import { reactive, onBeforeMount, watch } from "@vue/composition-api";
+import { loadData } from "./tableLoadData";
+import { paginationHook } from "./paginationHook";
 export default {
   name: "tableVue",
-  mixins: [tableLoadData, pagination],
-  data(){
-    return{
+  props: {
+    config: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  setup(props, { root }) {
+    // console.log(props.config);
+    // 加载数据
+    const { tableData, tableLoadData } = loadData({ root });
+    // 页码
+    const { pageData, handleSizeChange, handleCurrentChange, totalCount } = paginationHook();
+    // 组件变量
+    const data = reactive({
       tableConfig: {
         selection: true,
         recordCheckbox: false,
@@ -58,33 +70,76 @@ export default {
         tHead: [],
         paginationLayout: "total, sizes, prev, pager, next, jumper",
         paginationShow: true
+        // pagination: {
+        //   show: true,
+        //   layout: "total, sizes, prev, pager, next, jumper"
+        // }
       },
       tableData: []
-    }
-  },
-  beforeMount(){
-    this.initTableConfig();
-  },
-  mounted() {
-  },
-  methods:{
-    initTableConfig() {
-          let configData = this.config;
-          let keys = Object.keys(this.tableConfig);
-          // console.log(keys)
-          for (let key in configData) {
-            if (keys.includes(key)) { // ["selection", "recordCheckbox", "requestUrl", "tHead"].includes("selection")
-              this.tableConfig[key] = configData[key];
-            }
-          }
-        }
+    });
 
-  },
-  props: {
-    config: {
-      type: Object,
-      default: () => {}
-    }
+    /**
+     * vue3.0 业务逻辑的拆分及组合，还有复用性
+     */
+    /**
+     * watch 监听
+     */
+    // watch(() => tableData.item, (newValue, oldValue) => (data.tableData = newValue));
+    // 运用数组方法同时监听多个对象       做多件事情需要用{}处理
+    // 数据渲染
+    watch([
+        () => tableData.item,
+        () => tableData.total
+    ], ([tableData, total]) => {
+        data.tableData = tableData;
+        totalCount(total);
+        // console.log(total)
+    });
+
+    // 页码监听
+    watch([
+        () => pageData.currentPage,
+        () => pageData.pageSize
+    ], ([currentPage, pageSize]) => {
+      let requestData = data.tableConfig.requestData;
+      if (requestData.data) {
+        // console.log(requestData.data)
+        requestData.data.pageNumber = currentPage;
+        requestData.data.pageSize = pageSize;
+        tableLoadData(data.tableConfig.requestData);
+      }
+        // console.log(currentPage);
+        // console.log(pageSize);
+    });
+
+    /**
+     * 方法 methods
+     */
+    // 初始化table配置项  // const 声明对象或数组
+    // 匹配相同的key，如果存在，则替换
+    const initTableConfig = () => {
+      let configData = props.config;
+      let keys = Object.keys(data.tableConfig);
+      // console.log(keys)
+      for (let key in configData) {
+        if (keys.includes(key)) {
+          // ["selection", "recordCheckbox", "requestUrl", "tHead"].includes("selection")
+          data.tableConfig[key] = configData[key];
+        }
+      }
+    };
+
+    onBeforeMount(() => {
+      initTableConfig();
+      tableLoadData(data.tableConfig.requestData);
+    });
+
+    return {
+      data,
+      pageData, 
+      handleSizeChange, 
+      handleCurrentChange
+    };
   }
 };
 </script>

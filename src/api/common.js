@@ -38,7 +38,7 @@ export function common(){
  *   AK: 七牛云的密钥AK: type: string
  *   SK: 七牛云的密钥SK: type: string
  *   buckety: 七牛云储存空间名称: type: string
- * } params 
+ *  } params 
  * 
  */
 export function QiniuToken(data){
@@ -59,6 +59,22 @@ export function loadTableData(params){
         method: params.method || "post",
         url: params.url,
         data: params.data || {}
+
+    })
+}
+
+/**
+ * 获取省市区街关联 
+ * 
+ * @param {
+ *   
+ *  } params 
+ */
+export function GetCityPicker(data){
+    return service.request({
+        method: "post",
+        url: "/cityPicker/",
+        data
 
     })
 }

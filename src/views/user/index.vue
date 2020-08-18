@@ -13,14 +13,14 @@
                 <el-input placeholder="请输入搜索的关键字"></el-input>
               </el-col>
               <el-col :span="15">
-                <el-button type="danger">搜索</el-button>
+                <el-button type="danger">{{ data.cityPickerData }}</el-button>
               </el-col>
             </el-row>
           </div>
         </div>
       </el-col>
       <el-col :span="4">
-        <el-button type="danger" class="pull-right">添加用户</el-button>
+        <el-button type="danger" class="pull-right" @click="data.dialog_add = true">添加用户</el-button>
       </el-col>
     </el-row>
     <div class="black-space-30"></div>
@@ -33,6 +33,7 @@
         <el-button size="small" type="success" @click="operation(slotData.data)">编辑</el-button>
       </template>
     </TableVue>
+    <DialogAdd :flag.sync="data.dialog_add" />
   </div>
 </template>
 <script>
@@ -40,18 +41,21 @@ import { reactive, ref, watch, onMounted } from "@vue/composition-api";
 // 组件
 import SelectVue from "@c/Select";
 import TableVue from "@c/Table";
+import DialogAdd from "./dialog/add";
 export default {
   name: "userIndex",
-  components: { SelectVue, TableVue },
+  components: { SelectVue, TableVue, DialogAdd },
   setup(props) {
     const data = reactive({
+      cityPickerData: {},
+      dialog_add: false,
       configOption: {
-        init: ["name", "phone", "email"]
+        init: ["name", "phone"]
       },
       // table 组件配置参数
       configTable: {
         // 多选框
-        selection: true,
+        selection: false,
         // 翻页记录checkbox
         // recordCheckbox: true,
         // 表头
@@ -94,15 +98,13 @@ export default {
         requestData: {
           url: "getUserList",
           method: "post",
-          data:{
+          data: {
             pageNumber: 1,
             pageSize: 10
           }
         },
         paginationLayout: "total, sizes, prev, pager, next, jumper",
         paginationShow: true
-
-
 
         // pagination: {
         //   show: true,
