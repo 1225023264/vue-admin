@@ -11,13 +11,18 @@
         <el-input  placeholder="请输入手机号"></el-input>
       </el-form-item>
       <el-form-item label="地区：" :label-width="data.formLabelWidth" prop="content">
+        <!-- <CityPicker :cityPickerLevel="['province','city','area']" :cityPickerData.sync="data.cityPickerData" /> -->
         <CityPicker :cityPickerData.sync="data.cityPickerData" />
+        {{ data.cityPickerData }}
       </el-form-item>
       <el-form-item label="是否启用：" :label-width="data.formLabelWidth" prop="content">
-        <el-input></el-input>
+        <el-radio v-model="data.roleStatus" label="1">禁用</el-radio>
+        <el-radio v-model="data.roleStatus" label="2">启用</el-radio>
       </el-form-item>
       <el-form-item label="角色：" :label-width="data.formLabelWidth" prop="content">
-        <el-input></el-input>
+        <el-checkbox-group v-model="data.roleCode">
+          <el-checkbox v-for="item in data.roleItem" :key="item.role" :label="item.role">{{ item.name }}</el-checkbox>
+        </el-checkbox-group>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -28,6 +33,7 @@
 </template>
 <script>
 import { AddInfo } from "@/api/news";
+import { GetRole } from "@/api/user";
 import { reactive, ref, watchEffect } from "@vue/composition-api";
 // 组件
 import CityPicker from "@c/CityPicker";
@@ -72,12 +78,47 @@ export default {
         title: '',
         content: ''
       },
+      // 是否启用状态
+      roleStatus: "1",
+      // 角色
+      roleCode: ['A','B'],
+      // 角色选项
+      roleItem: [],
       // 分类下拉
       categoryOption: [],
       // 按钮加载
       submitLoading: false
-
     });
+    /**
+     * 请求角色
+     */
+    const getRole = () => {
+      // console.log(22222)
+      GetRole().then(response => {
+        data.roleItem = response.data.data
+        // console.log(response.data.data)
+      })
+    }
+    /**
+     * 弹窗打开,动画结束时
+     */
+    const openDialog = () => {
+      getRole() 
+    }
+
+    /********************************************************************
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
     // watch
     watchEffect(() => data.dialog_info_flag = props.flag);
     /**
@@ -88,9 +129,7 @@ export default {
       resetForm()
       emit("update:flag", false);
     };
-    const openDialog = () => {
-      data.categoryOption = props.category 
-    }
+    
     const resetForm = () => {
       refs.addInfoForm.resetFields();
       // data.form.category = '',
