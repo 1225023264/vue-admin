@@ -58,6 +58,36 @@ export function validateVCode(value) {
 
 }
 
+
+/**
+ * 验证手机号
+ */
+
+
+export function validatePhone(value) {
+    
+    let reg = /^1[3456789]\d{9}$/;
+
+    return !reg.test(value) ? true : false;
+
+}
+
+
+/**
+ * 验证真实姓名
+ */
+
+
+export function validateTruename(value) {
+    
+    let reg = /^[\u4e00-\u9fa5]{2,4}$/;
+
+    return !reg.test(value) ? true : false;
+
+}
+
+
+
 /**
  * 没有使用default时，可以同时声明多个export。
  * 文件 import 需要花括号。
