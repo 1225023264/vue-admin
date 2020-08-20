@@ -25,13 +25,18 @@
     </el-row>
     <div class="black-space-30"></div>
     <TableVue :config="data.configTable">
+      <!-- 插槽 -->
       <template v-slot:status="slotData">
-        <el-switch v-model="slotData.data.name" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        <el-switch v-model="slotData.data.status" active-value="2" inactive-value="1"  active-color="#13ce66" inactive-color="#ff4949"></el-switch>
       </template>
       <template v-slot:operation="slotData">
         <el-button size="small" type="danger" @click="operation(slotData.data)">删除</el-button>
         <el-button size="small" type="success" @click="operation(slotData.data)">编辑</el-button>
       </template>
+      <template v-slot:tableFooterLeft>
+        <el-button size="small">批量删除</el-button>
+      </template>
+      <!-- 插槽 -->
     </TableVue>
     <DialogAdd :flag.sync="data.dialog_add" />
   </div>
@@ -55,19 +60,19 @@ export default {
       // table 组件配置参数
       configTable: {
         // 多选框
-        selection: false,
+        selection: true,
         // 翻页记录checkbox
         // recordCheckbox: true,
         // 表头
         tHead: [
           {
             label: "邮箱/用户名",
-            field: "title",
+            field: "username",
             width: 200
           },
           {
             label: "真实姓名",
-            field: "name",
+            field: "truename",
             width: 120
           },
           {
@@ -76,7 +81,7 @@ export default {
           },
           {
             label: "地区",
-            field: "address"
+            field: "region"
           },
           {
             label: "角色",

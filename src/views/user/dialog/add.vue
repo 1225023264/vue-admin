@@ -6,6 +6,7 @@
     width="700px"
     @opened="openDialog"
   >
+  <!-- 表单 start -->
     <el-form :model="data.form" ref="addInfoForm" :rules="rules">
       <el-form-item label="用户名：" :label-width="data.formLabelWidth" prop="username">
         <el-input v-model="data.form.username" placeholder="请输入邮箱"></el-input>
@@ -40,11 +41,12 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="close">取消</el-button>
-      <el-button type="danger" :loading="data.submitLoading" @click="submit">确定</el-button>
+      <el-button type="danger" :loading="data.submitLoading" @click="submit('addInfoForm')">确定</el-button>
     </div>
   </el-dialog>
 </template>
 <script>
+import sha1 from "js-sha1";
 import { GetRole, UserAdd } from "@/api/user";
 import { reactive, ref, watchEffect } from "@vue/composition-api";
 import { stripscript, validateEmail, validatePass, validatePhone, validateTruename } from "@/utils/validate";
@@ -113,6 +115,33 @@ export default {
           callback();
         }
       };
+      // 验证地区
+      let validateRegionValue = (rule, value, callback) => {
+        
+        if (Object.values(value) === 0) {
+          callback(new Error('请选择地区'));
+        } else {
+          callback();
+        }
+      };
+      // 验证禁启用
+      let validateStatusValue = (rule, value, callback) => {
+
+        if (value === '') {
+          callback(new Error('请选择是否禁用'));
+        } else {
+          callback();
+        }
+      };
+      // 验证角色
+      let validateRoleValue = (rule, value, callback) => {
+
+        if (value.length === 0) {
+          callback(new Error('请至少选择一个角色'));
+        } else {
+          callback();
+        }
+      };
 
 
 /********************************************************************************************* */    
@@ -130,7 +159,7 @@ export default {
         password: "",
         phone: "",
         region: "",
-        status: "2",
+        status: "1",
         role: []
       },
       // 角色选项
@@ -153,6 +182,15 @@ export default {
         ],
         phone: [
             { validator: validatePhoneValue, trigger: 'blur' }
+        ],
+        region: [
+            { validator: validateRegionValue, trigger: 'change' }
+        ],
+        status: [
+            { validator: validateStatusValue, trigger: 'change' }
+        ],
+        role: [
+            { validator: validateRoleValue, trigger: 'change' }
         ]
       });
     // watch
@@ -189,21 +227,23 @@ export default {
     };
 
     const resetForm = () => {
-      data.formLabelWidth = {};
+      data.cityPickerData = {}
       refs.addInfoForm.resetFields();
     };
 
     
-    const submit = () => {
+    // const submit = () => {
       
-      if (data.form.role.length === 0) {
-        root.$message({
-          message: "请选择角色类型！！！",
-          type: "error"
-        })
-        return false
-      }
-
+    //   if (data.form.role.length === 0) {
+    //     root.$message({
+    //       message: "请选择角色类型！！！",
+    //       type: "error"
+    //     })
+    //     return false
+    //   }
+      const submit = (formName => {
+        refs[formName].validate((valid) => {
+          
       /**
        * 数据引用类型  脱离
        * 一条线上的东西
@@ -228,7 +268,7 @@ export default {
 
       requestData.role = requestData.role.join('');     //  数组转字符串， 默认以，号隔开
       requestData.region = JSON.stringify(data.cityPickerData);
-
+      requestData.password = sha1(requestData.password);
 
 
       // console.log(requestData)
@@ -237,10 +277,16 @@ export default {
 
 
       UserAdd(requestData).then(response => {
-        console.log(response.data.data)
+        let data = response.data
+        console.log(data)
+        root.$message({
+          message: data.message,
+          type: "success"
+        })
         resetForm()
       })
-    };
+    });
+  });
     return {
       data,
       rules,

@@ -30,17 +30,27 @@
         ></el-table-column>
       </template>
     </el-table>
-    <el-pagination
-      v-if="data.tableConfig.paginationShow"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="pageData.currentPage"
-      :page-sizes="pageData.pageSizes"
-      :page-size="pageData.pageSize"
-      :layout="data.tableConfig.paginationLayout"
-      :total="pageData.total"
-      background
-    ></el-pagination>
+    <div class="table-footer">
+      <el-row>
+        <el-col :span="4">
+            <slot name="tableFooterLeft"></slot>
+        </el-col>
+        <el-col :span="20">
+          <el-pagination
+            class="pull-right"
+            v-if="data.tableConfig.paginationShow"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pageData.currentPage"
+            :page-sizes="pageData.pageSizes"
+            :page-size="pageData.pageSize"
+            :layout="data.tableConfig.paginationLayout"
+            :total="pageData.total"
+            background
+          ></el-pagination>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script>
@@ -144,6 +154,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.table-footer { padding: 15px 0; }
 </style>
 
 <!--
