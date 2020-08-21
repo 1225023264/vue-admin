@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="data.tableData" border style="width: 100%">
+    <el-table :data="data.tableData" border style="width: 100%" @selection-change="thatSelectCheckbox">
       <!-- 多选框 -->
       <el-table-column v-if="data.tableConfig.selection" type="selection" width="55"></el-table-column>
 
@@ -63,9 +63,13 @@ export default {
     config: {
       type: Object,
       default: () => {}
+    },
+    tableRow: {
+      type: Object,
+      default: () => {}
     }
   },
-  setup(props, { root }) {
+  setup(props, { root, emit }) {
     // console.log(props.config);
     // 加载数据
     const { tableData, tableLoadData } = loadData({ root });
@@ -139,16 +143,30 @@ export default {
       }
     };
 
+    // 勾选CheckBox时触发
+    const thatSelectCheckbox = (val) => {
+      // id, rowData
+      // console.log(val)
+      // console.log(val.map(item => item.phone))
+      let rowData = {
+        idItem: val.map(item => item.id)
+      }
+      emit("update:tableRow", rowData);
+      // console.log(props.tableRow)
+    }
+    // 刷新数据
+    const refreshData = () => {
+      tableLoadData(data.tableConfig.requestData);
+    }
+
     onBeforeMount(() => {
       initTableConfig();
       tableLoadData(data.tableConfig.requestData);
     });
 
     return {
-      data,
-      pageData, 
-      handleSizeChange, 
-      handleCurrentChange
+      data, pageData, 
+      handleSizeChange, handleCurrentChange, thatSelectCheckbox, refreshData
     };
   }
 };

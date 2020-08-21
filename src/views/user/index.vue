@@ -13,7 +13,7 @@
                 <el-input placeholder="请输入搜索的关键字"></el-input>
               </el-col>
               <el-col :span="15">
-                <el-button type="danger">{{ data.cityPickerData }}</el-button>
+                <el-button type="danger">搜索</el-button>
               </el-col>
             </el-row>
           </div>
@@ -24,17 +24,17 @@
       </el-col>
     </el-row>
     <div class="black-space-30"></div>
-    <TableVue :config="data.configTable">
+    <TableVue ref="userTable" :config="data.configTable" :tableRow.sync="data.tableRow">
       <!-- 插槽 -->
       <template v-slot:status="slotData">
         <el-switch v-model="slotData.data.status" active-value="2" inactive-value="1"  active-color="#13ce66" inactive-color="#ff4949"></el-switch>
       </template>
       <template v-slot:operation="slotData">
-        <el-button size="small" type="danger" @click="operation(slotData.data)">删除</el-button>
-        <el-button size="small" type="success" @click="operation(slotData.data)">编辑</el-button>
+        <el-button size="small" type="danger" @click="handlerDel(slotData.data)">删除</el-button>
+        <el-button size="small" type="success" >编辑</el-button>
       </template>
       <template v-slot:tableFooterLeft>
-        <el-button size="small">批量删除</el-button>
+        <el-button size="small" @click="handlerBatchDel()">批量删除</el-button>
       </template>
       <!-- 插槽 -->
     </TableVue>
@@ -43,15 +43,21 @@
 </template>
 <script>
 import { reactive, ref, watch, onMounted } from "@vue/composition-api";
+import { UserDel } from "@/api/user";
 // 组件
 import SelectVue from "@c/Select";
 import TableVue from "@c/Table";
 import DialogAdd from "./dialog/add";
+// 3.0 抽离的方法
+import { global } from "@/utils/global_V3.0";
 export default {
   name: "userIndex",
   components: { SelectVue, TableVue, DialogAdd },
-  setup(props) {
+  setup(props, { root, refs }) {
+    const { confirm } = global();
     const data = reactive({
+      // table选择的数据
+      tableRow: {},
       cityPickerData: {},
       dialog_add: false,
       configOption: {
@@ -108,8 +114,8 @@ export default {
             pageSize: 10
           }
         },
-        paginationLayout: "total, sizes, prev, pager, next, jumper",
-        paginationShow: true
+        // paginationLayout: "total, sizes, prev, pager, next, jumper",
+        // paginationShow: true
 
         // pagination: {
         //   show: true,
@@ -118,16 +124,54 @@ export default {
       }
     });
 
+    const handlerBatchDel = () => {
+      // console.log(data.tableRow)
+      let userId = data.tableRow.idItem
+      // console.log(id)
+      if(!userId || userId.length === 0){
+        root.$message({
+          message: "请勾选需要删除的用户！！！",
+          type: "error"
+        })
+        return false;
+      }
+      confirm({
+        content: "确认删除当前信息，确认后将无法恢复！！",
+        tip: '警告',
+        fn: userDelete
+      })
+
+      // console.log(id)
+    }
+    // 删除用户
+    const userDelete = () => {
+      UserDel({ id: data.tableRow.idItem }).then(response => {
+        // console.log(response.data.data)
+        // console.log(refs.userTable)
+        // 其中一种写法
+        refs.userTable.refreshData()
+      })
+    }
+
+
+
     /**
      * methods
      */
-    let operation = params => {
-      console.log(params);
+    let handlerDel = params => {
+      // console.log(params);
+      data.tableRow.idItem = [params.id]
+      confirm({
+        content: "确认删除当前信息，确认后将无法恢复！！",
+        tip: '警告',
+        fn: userDelete
+      })
     };
 
     return {
       data,
-      operation
+      handlerDel,
+      handlerBatchDel
     };
   }
 };
