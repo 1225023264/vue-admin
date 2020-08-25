@@ -42,6 +42,7 @@ service.interceptors.request.use(function (config) {
  * 请求接口后，返回数据进行拦截（响应拦截器）
  */
 service.interceptors.response.use(function (response) {
+    // console.log(response.data                )
     // 对响应数据做点什么
     let data = response.data
     // 业务需求

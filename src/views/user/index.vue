@@ -24,6 +24,7 @@
       </el-col>
     </el-row>
     <div class="black-space-30"></div>
+    <el-button @click="busEvent()">触发</el-button>
     <TableVue ref="userTable" :config="data.configTable" :tableRow.sync="data.tableRow">
       <!-- 插槽 -->
       <template v-slot:status="slotData">
@@ -38,23 +39,42 @@
       </template>
       <!-- 插槽 -->
     </TableVue>
-    <DialogAdd :flag.sync="data.dialog_add" />
+    <!-- 子组件 -->
+    <DialogAdd :flag.sync="data.dialog_add"/>
+    <A aaa="1111" bbb="2222" v-on:upaa="busEvent"/>
   </div>
 </template>
 <script>
-import { reactive, ref, watch, onMounted } from "@vue/composition-api";
+import { reactive, ref, watch, onMounted, provide } from "@vue/composition-api";
 import { UserDel } from "@/api/user";
 // 组件
 import SelectVue from "@c/Select";
 import TableVue from "@c/Table";
 import DialogAdd from "./dialog/add";
+import A from "./a";
 // 3.0 抽离的方法
 import { global } from "@/utils/global_V3.0";
 export default {
   name: "userIndex",
-  components: { SelectVue, TableVue, DialogAdd },
+  components: { SelectVue, TableVue, DialogAdd, A },
   setup(props, { root, refs }) {
+    
+    // 注入
+    // provide("aaaaaaa", "我是父组件向子组件传递的值");
+    provide("aaaaaaa", {
+      a: "aaa",
+      b: "bbb"
+    });
+
+
     const { confirm } = global();
+
+    const userTable = ref(null);
+    
+    const busEvent = () => {
+      console.log('9999999999')
+    }
+
     const data = reactive({
       // table选择的数据
       tableRow: {},
@@ -148,8 +168,11 @@ export default {
       UserDel({ id: data.tableRow.idItem }).then(response => {
         // console.log(response.data.data)
         // console.log(refs.userTable)
+
         // 其中一种写法
-        refs.userTable.refreshData()
+        // refs.userTable.refreshData()
+        // 第二种写法
+        userTable.value.refreshData()
       })
     }
 
@@ -171,7 +194,9 @@ export default {
     return {
       data,
       handlerDel,
-      handlerBatchDel
+      handlerBatchDel,
+      userTable,
+      busEvent
     };
   }
 };

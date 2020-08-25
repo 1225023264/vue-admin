@@ -20,10 +20,15 @@ export function loadData() {
         loadTableData(requestData).then(response => {
             let responseData = response.data.data.data;
             // console.log(response.data.data.data)
-            if (responseData && responseData.length > 0) {
-                tableData.item = responseData;
-                tableData.total = response.data.data.total
-            }
+            // 后台返回数据时，并不是返回一个数组，有时返回一个null，统一返回的是数组，无论是否为空 array
+            tableData.item = responseData;
+            tableData.total = responseData.length === 0 ? 0 : response.data.data.total
+
+            // 后台返回数据时，并不是返回一个数组，有时返回一个null，统一返回的是数组，无论是否为空 array
+            // if (responseData && responseData.length > 0) {
+            //     tableData.item = responseData;
+            //     tableData.total = response.data.data.total
+            // }
         }).catch(error => {
 
         })

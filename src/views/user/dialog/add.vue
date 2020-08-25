@@ -48,7 +48,7 @@
 <script>
 import sha1 from "js-sha1";
 import { GetRole, UserAdd } from "@/api/user";
-import { reactive, ref, watchEffect } from "@vue/composition-api";
+import { reactive, ref, watchEffect, watch } from "@vue/composition-api";
 import { stripscript, validateEmail, validatePass, validatePhone, validateTruename } from "@/utils/validate";
 // 组件
 import CityPicker from "@c/CityPicker";
@@ -66,7 +66,7 @@ export default {
     }
   },
   setup(props, { emit, root, refs }) {
-
+    
       // 验证用户名
       let validateUsernameValue = (rule, value, callback) => {
 
@@ -227,7 +227,8 @@ export default {
     };
 
     const resetForm = () => {
-      data.cityPickerData = {}
+      console.log(data.cityPickerData);
+      data.cityPickerData = {};
       refs.addInfoForm.resetFields();
     };
 
