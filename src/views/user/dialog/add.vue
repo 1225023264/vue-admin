@@ -7,7 +7,7 @@
     @opened="openDialog"
   >
   <!-- 表单 start -->
-    <el-form :model="data.form" ref="addInfoForm" :rules="rules">
+    <el-form :model="data.form" :rules="data.rules" ref="addInfoForm">
       <el-form-item label="用户名：" :label-width="data.formLabelWidth" prop="username">
         <el-input v-model="data.form.username" placeholder="请输入邮箱"></el-input>
       </el-form-item>
@@ -60,9 +60,9 @@ export default {
       type: Boolean,
       default: false
     },
-    category: {
-      type: Array,
-      default: () => []
+    editData: {
+      type: Object,
+      default: () => {}
     }
   },
   setup(props, { emit, root, refs }) {
@@ -82,9 +82,10 @@ export default {
       let validatePasswordValue = (rule, value, callback) => {
         // console.log(stripscript(value))
         //过滤后的数据
-        data.form.password = stripscript(value)
-        value = data.form.password
-
+        if (value) {
+          data.form.password = stripscript(value)
+          value = data.form.password
+        }
         if (value === '') {
           callback(new Error('请输入密码'));
         } else if (validatePass(value)) {
@@ -162,15 +163,8 @@ export default {
         status: "1",
         role: []
       },
-      // 角色选项
-      roleItem: [],
-      // 按钮加载
-      submitLoading: false
-    });
-    
       // 表单的验证
-       
-      const rules = reactive({
+      rules: reactive({
         username: [
           { validator: validateUsernameValue, trigger: 'blur' }
         ],
@@ -192,7 +186,13 @@ export default {
         role: [
             { validator: validateRoleValue, trigger: 'change' }
         ]
-      });
+    }),
+      // 角色选项
+      roleItem: [],
+      // 按钮加载
+      submitLoading: false
+    });
+    
     // watch
     watchEffect(() => (data.dialog_info_flag = props.flag));
 
@@ -214,7 +214,14 @@ export default {
      * 弹窗打开,动画结束时
      */
     const openDialog = () => {
+      // 角色请求
       getRole();
+      // 初始值处理
+      let editData = props.editData;
+      editData.role = editData.role.split(',');
+      data.form = editData;
+      // console.log('props.editData')
+      console.log(props.editData)
     };
 
     /**
@@ -242,55 +249,65 @@ export default {
     //     })
     //     return false
     //   }
-      const submit = (formName => {
+      const submit = (formName) => {
         refs[formName].validate((valid) => {
           
-      /**
-       * 数据引用类型  脱离
-       * 一条线上的东西
-       */
-      // 深拷贝   JSON.parse(JSON.stringify(data.form))     // 字符串，再次转JSON对象   深拷贝内层嵌套的方法会无法使用
-      // 浅拷贝   Object.assign({}, data.form)        // 拷贝出来的就是一个对象 浅拷贝只第一层不会有影响，只将第一层脱离出来
+            // 表单验证通过
+            if (valid) {
+              /**
+               * 数据引用类型  脱离
+               * 一条线上的东西
+               */
+              // 深拷贝   JSON.parse(JSON.stringify(data.form))     // 字符串，再次转JSON对象   深拷贝内层嵌套的方法会无法使用
+              // 浅拷贝   Object.assign({}, data.form)        // 拷贝出来的就是一个对象 浅拷贝只第一层不会有影响，只将第一层脱离出来
 
-      /**
-       * 注意事项，丢失对象
-       */
-      // let test = {
-      //   fun: function(){},
-      //   aaa: undefined,
-      //   sym: Symbol(),
-      //   ccc: "aa",
-      //   ddd: function(){}
-      // }
-      // console.log(JSON.parse(JSON.stringify(test)))
-      
-      // 数据处理
-      let requestData = JSON.parse(JSON.stringify(data.form));
+              /**
+               * 注意事项，丢失对象
+               */
+              // let test = {
+              //   fun: function(){},
+              //   aaa: undefined,
+              //   sym: Symbol(),
+              //   ccc: "aa",
+              //   ddd: function(){}
+              // }
+              // console.log(JSON.parse(JSON.stringify(test)))
+              
+              // 数据处理
+              let requestData = JSON.parse(JSON.stringify(data.form));
 
-      requestData.role = requestData.role.join('');     //  数组转字符串， 默认以，号隔开
-      requestData.region = JSON.stringify(data.cityPickerData);
-      requestData.password = sha1(requestData.password);
-
-
-      // console.log(requestData)
-
-      // 深拷贝 JSON.stringify(requestData)
+              requestData.role = requestData.role.join('');     //  数组转字符串， 默认以，号隔开
+              requestData.region = JSON.stringify(data.cityPickerData);
+              requestData.password = sha1(requestData.password);
 
 
-      UserAdd(requestData).then(response => {
-        let data = response.data
-        console.log(data)
-        root.$message({
-          message: data.message,
-          type: "success"
-        })
-        resetForm()
-      })
-    });
-  });
+              // console.log(requestData)
+
+              // 深拷贝 JSON.stringify(requestData)
+
+
+              UserAdd(requestData).then(response => {
+                let data = response.data
+                // console.log(data)
+                root.$message({
+                  message: data.message,
+                  type: "success"
+                })
+                close();
+                emit('refreshTableData');
+                // resetForm();
+                // emit("update:flag", false)
+              })
+              console.log('通过');
+            } else {
+              console.log('error submit!!');
+              return false;
+            }
+          })
+};
+
     return {
       data,
-      rules,
       // methods
       close,
       openDialog,

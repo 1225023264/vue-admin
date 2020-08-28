@@ -24,15 +24,14 @@
       </el-col>
     </el-row>
     <div class="black-space-30"></div>
-    <el-button @click="busEvent()">触发</el-button>
     <TableVue ref="userTable" :config="data.configTable" :tableRow.sync="data.tableRow">
       <!-- 插槽 -->
       <template v-slot:status="slotData">
-        <el-switch v-model="slotData.data.status" active-value="2" inactive-value="1"  active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        <el-switch @change="handlerSwitch(slotData.data)" v-model="slotData.data.status" active-value="2" inactive-value="1"  active-color="#13ce66" inactive-color="#ff4949"></el-switch>
       </template>
       <template v-slot:operation="slotData">
         <el-button size="small" type="danger" @click="handlerDel(slotData.data)">删除</el-button>
-        <el-button size="small" type="success" >编辑</el-button>
+        <el-button size="small" type="success" @click="handlerEdit(slotData.data)">编辑</el-button>
       </template>
       <template v-slot:tableFooterLeft>
         <el-button size="small" @click="handlerBatchDel()">批量删除</el-button>
@@ -40,49 +39,35 @@
       <!-- 插槽 -->
     </TableVue>
     <!-- 子组件 -->
-    <DialogAdd :flag.sync="data.dialog_add"/>
-    <A aaa="1111" bbb="2222" v-on:upaa="busEvent"/>
+    <DialogAdd :flag.sync="data.dialog_add" :editData="data.editData" @refreshTableData="refreshData"/>
   </div>
 </template>
 <script>
 import { reactive, ref, watch, onMounted, provide } from "@vue/composition-api";
-import { UserDel } from "@/api/user";
+import { UserDel, UserActives } from "@/api/user";
 // 组件
 import SelectVue from "@c/Select";
 import TableVue from "@c/Table";
 import DialogAdd from "./dialog/add";
-import A from "./a";
 // 3.0 抽离的方法
 import { global } from "@/utils/global_V3.0";
 export default {
   name: "userIndex",
-  components: { SelectVue, TableVue, DialogAdd, A },
+  components: { SelectVue, TableVue, DialogAdd },
   setup(props, { root, refs }) {
-    
-    // 注入
-    // provide("aaaaaaa", "我是父组件向子组件传递的值");
-    provide("aaaaaaa", {
-      a: "aaa",
-      b: "bbb"
-    });
-
-
     const { confirm } = global();
-
     const userTable = ref(null);
-    
-    const busEvent = () => {
-      console.log('9999999999')
-    }
-
     const data = reactive({
       // table选择的数据
       tableRow: {},
       cityPickerData: {},
       dialog_add: false,
+      editData: {},
       configOption: {
         init: ["name", "phone"]
       },
+      // 阻止状态
+      updateUserStatusFlag: false,
       // table 组件配置参数
       configTable: {
         // 多选框
@@ -172,8 +157,12 @@ export default {
         // 其中一种写法
         // refs.userTable.refreshData()
         // 第二种写法
-        userTable.value.refreshData()
+        refreshData()
       })
+    }
+
+    const refreshData = () => {
+        userTable.value.refreshData()
     }
 
 
@@ -181,7 +170,7 @@ export default {
     /**
      * methods
      */
-    let handlerDel = params => {
+    const handlerDel = params => {
       // console.log(params);
       data.tableRow.idItem = [params.id]
       confirm({
@@ -191,12 +180,49 @@ export default {
       })
     };
 
+
+    /**
+     * 编辑
+     */
+    const handlerEdit = (params) => {
+      data.dialog_add = true;
+      // 子组件赋值
+      data.editData = Object.assign({}, params);
+    }
+
+
+    /**
+     * 修改用户状态
+     */
+    const handlerSwitch = (params) => {
+      // false
+      if (data.updateUserStatusFlag) { return false }
+      data.updateUserStatusFlag = true
+      // console.log(params)
+      let requestData = {
+        id: params.id,
+        status: params.status
+      }
+      UserActives(requestData).then(response => {
+        console.log(response.data.data)
+        root.$message({
+          message: response.data.message,
+          type: "success"
+        })
+        data.updateUserStatusFlag = !data.updateUserStatusFlag
+      }).catch(error => {
+        data.updateUserStatusFlag = !data.updateUserStatusFlag
+      })
+    }
+
     return {
       data,
       handlerDel,
       handlerBatchDel,
       userTable,
-      busEvent
+      refreshData,
+      handlerSwitch,
+      handlerEdit
     };
   }
 };
