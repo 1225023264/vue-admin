@@ -317,7 +317,7 @@ export default {
                   delete requestData.password
                 }
                 userEdit(requestData)
-                console.log(requestData)
+                // console.log(requestData)
               }else{
                 requestData.password = sha1(requestData.password);
                 userAdd(requestData)
