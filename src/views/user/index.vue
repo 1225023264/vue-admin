@@ -20,7 +20,7 @@
         </div>
       </el-col>
       <el-col :span="4">
-        <el-button type="danger" class="pull-right" @click="data.dialog_add = true">添加用户</el-button>
+        <el-button type="danger" class="pull-right" @click="handlerAdd">添加用户</el-button>
       </el-col>
     </el-row>
     <div class="black-space-30"></div>
@@ -62,6 +62,7 @@ export default {
       tableRow: {},
       cityPickerData: {},
       dialog_add: false,
+      dialog_edit: false,
       editData: {},
       configOption: {
         init: ["name", "phone"]
@@ -180,6 +181,16 @@ export default {
       })
     };
 
+    /**
+     * 添加用户
+     */
+    const handlerAdd = () => {
+      data.dialog_add = true;
+      // 子组件赋值
+      data.editData = Object.assign({});
+
+    }
+
 
     /**
      * 编辑
@@ -199,12 +210,12 @@ export default {
       if (data.updateUserStatusFlag) { return false }
       data.updateUserStatusFlag = true
       // console.log(params)
-      let requestData = {
-        id: params.id,
-        status: params.status
-      }
-      UserActives(requestData).then(response => {
-        console.log(response.data.data)
+      // let requestData = {
+      //   id: params.id,
+      //   status: params.status
+      // }
+      UserActives({ id: params.id, status: params.status }).then(response => {
+        // console.log(response.data.data)
         root.$message({
           message: response.data.message,
           type: "success"
@@ -222,7 +233,8 @@ export default {
       userTable,
       refreshData,
       handlerSwitch,
-      handlerEdit
+      handlerEdit,
+      handlerAdd
     };
   }
 };

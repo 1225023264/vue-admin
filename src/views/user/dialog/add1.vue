@@ -31,7 +31,11 @@
       </el-form-item>
       <el-form-item label="角色：" :label-width="data.formLabelWidth" prop="role">
         <el-checkbox-group v-model="data.form.role">
-          <el-checkbox v-for="item in data.roleItem" :key="item.role" :label="item.role" >{{ item.name }}</el-checkbox>
+          <el-checkbox
+            v-for="item in data.roleItem"
+            :key="item.role"
+            :label="item.role"
+          >{{ item.name }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
     </el-form>
@@ -43,7 +47,7 @@
 </template>
 <script>
 import sha1 from "js-sha1";
-import { GetRole, UserAdd, UserEdit } from "@/api/user";
+import { GetRole, UserAdd } from "@/api/user";
 import { reactive, ref, watchEffect, watch } from "@vue/composition-api";
 import { stripscript, validateEmail, validatePass, validatePhone, validateTruename } from "@/utils/validate";
 // 组件
@@ -76,33 +80,18 @@ export default {
       };
       // 验证密码
       let validatePasswordValue = (rule, value, callback) => {
-            /**
-             * 业务逻辑
-             * 1、编辑状态：
-             *    需要检验：data.form.id存在并且，密码不为空时
-             *    不需要检验：data.form.id存在并且，密码为空时
-             * 
-             * 2、添加状态
-             *    需要检验：data.form.id不存在
-             */
-        if(data.form.id && !value) {
-          callback();
-        }
-        
         // console.log(stripscript(value))
-        if((data.form.id && value) || !data.form.id) {
-        // 过滤后的数据
-            if (value) {
-            data.form.password = stripscript(value);
-            value = data.form.password;
-          }
-          if (value === '') {
-            callback(new Error('请输入密码'));
-          } else if (validatePass(value)) {
-            callback(new Error('密码为6至20位数字+字母'));
-          } else {
-            callback();
-          }
+        //过滤后的数据
+        if (value) {
+          data.form.password = stripscript(value);
+          value = data.form.password;
+        }
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        } else if (validatePass(value)) {
+          callback(new Error('密码为6至20位数字+字母'));
+        } else {
+          callback();
         }
       };
       // 验证真实姓名
@@ -171,7 +160,7 @@ export default {
         password: "",
         phone: "",
         region: "",
-        status: "2",
+        status: "1",
         role: []
       },
       // 表单的验证
@@ -229,22 +218,10 @@ export default {
       getRole();
       // 初始值处理
       let editData = props.editData;
-      // console.log(editData.id)
-      if(editData.id) { // 编辑
-        editData.role = editData.role.split(','); // 数组
-      }else{ // 添加
-        data.form.id && delete data.form.id
-      }
-
-      // 循环JSON对象
-      for(let key in editData) {
-        data.form[key] = editData.id ? editData[key] : ""
-        // console.log(key +":"+ editData[key])
-      }
-      // console.log(data.form)
-      // data.form = editData;
+      editData.role = editData.role.split(',');
+      data.form = editData;
       // console.log('props.editData')
-      // console.log(props.editData)
+      console.log(props.editData)
     };
 
     /**
@@ -277,8 +254,6 @@ export default {
           
             // 表单验证通过
             if (valid) {
-              // console.log("通过");
-              // return false;
               /**
                * 数据引用类型   脱离
                * 一条线上的东西 改的是最原始的那一份
@@ -299,73 +274,37 @@ export default {
               // console.log(JSON.parse(JSON.stringify(test)))
               
               // 数据处理
-              // let requestData = JSON.parse(JSON.stringify(data.form));
-              let requestData = Object.assign({}, data.form);
-              requestData.role = requestData.role.join();     //  数组转字符串， 默认以，号隔开
+              let requestData = JSON.parse(JSON.stringify(data.form));
+
+              requestData.role = requestData.role.join('');     //  数组转字符串， 默认以，号隔开
               requestData.region = JSON.stringify(data.cityPickerData);
+              requestData.password = sha1(requestData.password);
+
 
               // console.log(requestData)
 
               // 深拷贝 JSON.stringify(requestData)
-              // 添加状态，需要密码，并且加密码
-              // 编辑状态，值存在，需要密码，并且加密码，负责删除
-              if(requestData.id){
-              //  requestData.password ? sha1(requestData.password) : delete requestData.password;
-                if(requestData.password) {
-                  requestData.password = sha1(requestData.password)
-                }else{
-                  delete requestData.password
-                }
-                userEdit(requestData)
-                console.log(requestData)
-              }else{
-                requestData.password = sha1(requestData.password);
-                userAdd(requestData)
-              }
-              // UserAdd(requestData).then(response => {
-              //   let data = response.data
-              //   // console.log(data)
-              //   root.$message({
-              //     message: data.message,
-              //     type: "success"
-              //   })
-              //   close();
-              //   emit('refreshTableData');
-              //   // resetForm();
-              //   // emit("update:flag", false)
-              // })
-              // // console.log('通过');
+
+
+              UserAdd(requestData).then(response => {
+                let data = response.data
+                // console.log(data)
+                root.$message({
+                  message: data.message,
+                  type: "success"
+                })
+                close();
+                emit('refreshTableData');
+                // resetForm();
+                // emit("update:flag", false)
+              })
+              console.log('通过');
             } else {
-              // console.log('error submit!!');
-              console.log("不通过");
+              console.log('error submit!!');
               return false;
             }
           })
 };
-
-              const userAdd = (requestData) => {
-              UserAdd(requestData).then(response => {
-                let data = response.data
-                root.$message({
-                  message: data.message,
-                  type: "success"
-                })
-                close();
-                emit('refreshTableData');
-              })
-            }
-
-              const userEdit = (requestData) => {
-              UserEdit(requestData).then(response => {
-                let data = response.data
-                root.$message({
-                  message: data.message,
-                  type: "success"
-                })
-                close();
-                emit('refreshTableData');
-              })
-            }
 
     return {
       data,
