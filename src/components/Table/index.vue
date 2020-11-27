@@ -158,6 +158,16 @@ export default {
     const refreshData = () => {
       tableLoadData(data.tableConfig.requestData);
     }
+    // 带参数的刷新数据
+    const paramsLoadData = (params) => {
+      let requestData = Object.assign({}, params, {
+        pageNumber: 1,
+        pageSize: 10
+      })
+      data.tableConfig.requestData.data = requestData
+      tableLoadData(data.tableConfig.requestData.data);
+      console.log(data.tableConfig.requestData.data)
+    }
 
     onBeforeMount(() => {
       initTableConfig();
@@ -166,7 +176,7 @@ export default {
 
     return {
       data, pageData, 
-      handleSizeChange, handleCurrentChange, thatSelectCheckbox, refreshData
+      handleSizeChange, handleCurrentChange, thatSelectCheckbox, refreshData, paramsLoadData
     };
   }
 };

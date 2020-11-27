@@ -244,7 +244,7 @@ export default {
       // console.log(data.form)
       // data.form = editData;
       // console.log('props.editData')
-      // console.log(props.editData)
+      console.log(props.editData)
     };
 
     /**
@@ -318,23 +318,23 @@ export default {
                 }
                 userEdit(requestData)
                 // console.log(requestData)
-              }else{
-                requestData.password = sha1(requestData.password);
-                userAdd(requestData)
-              }
-              // UserAdd(requestData).then(response => {
-              //   let data = response.data
-              //   // console.log(data)
-              //   root.$message({
-              //     message: data.message,
-              //     type: "success"
-              //   })
-              //   close();
-              //   emit('refreshTableData');
-              //   // resetForm();
-              //   // emit("update:flag", false)
-              // })
-              // // console.log('通过');
+                }else{
+                  requestData.password = sha1(requestData.password);
+                  userAdd(requestData)
+                }
+                // UserAdd(requestData).then(response => {
+                //   let data = response.data
+                //   // console.log(data)
+                //   root.$message({
+                //     message: data.message,
+                //     type: "success"
+                //   })
+                //   close();
+                //   emit('refreshTableData');
+                //   // resetForm();
+                //   // emit("update:flag", false)
+                // })
+                // // console.log('通过');
             } else {
               // console.log('error submit!!');
               console.log("不通过");
@@ -344,6 +344,8 @@ export default {
 };
 
               const userAdd = (requestData) => {
+                // console.log(requestData);
+                // return false
               UserAdd(requestData).then(response => {
                 let data = response.data
                 root.$message({
@@ -356,6 +358,8 @@ export default {
             }
 
               const userEdit = (requestData) => {
+                // console.log(requestData);
+                // return false
               UserEdit(requestData).then(response => {
                 let data = response.data
                 root.$message({

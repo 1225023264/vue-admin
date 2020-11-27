@@ -7,13 +7,13 @@
           <div class="warp-content">
             <el-row :gutter="16">
               <el-col :span="3">
-                <selectVue :config="data.configOption" />
+                <selectVue :config="data.configOption" :selectData.sync="data.selectData" />
               </el-col>
               <el-col :span="5">
-                <el-input placeholder="请输入搜索的关键字"></el-input>
+                <el-input v-model="data.key_word" placeholder="请输入搜索的关键字"></el-input>
               </el-col>
               <el-col :span="15">
-                <el-button type="danger">搜索</el-button>
+                <el-button type="danger" @click="search">搜索</el-button>
               </el-col>
             </el-row>
           </div>
@@ -67,6 +67,10 @@ export default {
       configOption: {
         init: ["name", "phone"]
       },
+      // 下拉菜单的数据
+      selectData: {},
+      // 搜索关键字
+      key_word: "",
       // 阻止状态
       updateUserStatusFlag: false,
       // table 组件配置参数
@@ -129,6 +133,17 @@ export default {
         // }
       }
     });
+
+    const search = () => {
+
+      let requesttData = {
+        [data.selectData.value] : data.key_word
+      }
+      // console.log(requesttData)
+      refs.userTable.paramsLoadData(requesttData);
+      // console.log(data.selectData)
+      // console.log(data.key_word)
+    }
 
     const handlerBatchDel = () => {
       // console.log(data.tableRow)
@@ -234,7 +249,8 @@ export default {
       refreshData,
       handlerSwitch,
       handlerEdit,
-      handlerAdd
+      handlerAdd,
+      search
     };
   }
 };
