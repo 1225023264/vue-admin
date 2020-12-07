@@ -6,7 +6,7 @@ import { getToken, removeToKen, removeUserName } from "@/utils/app";
 const whiteRouter = ['/login'];     // indexOf方法, 判断数组中是否存在指定的某个对象,   如果不存在, 则返回-1
 
 // 路由守卫
-router.beforeEach((to, form, next) => {
+router.beforeEach((to, from, next) => {
     // console.log(to)     // index
     if (getToken()) {
         // console.log(to)
@@ -17,7 +17,36 @@ router.beforeEach((to, form, next) => {
             store.commit("app/SET_USERNAME",'');
             next();
         } else {
-            next();
+            // 获取用户角色
+            // 动态分配路由权限
+            /**
+             * 1、什么时候处理动态路由
+             * 2、以什么条件处理
+             * roles[]
+             */
+            if(store.getters['permission/roles'].length === 0){
+                store.dispatch('permission/getRoles').then(response => {
+
+                    let role = response.role;
+                    // console.log(response)
+                    store.dispatch('permission/createRouter', role).then(response => {
+                        let addRouters = store.getters['permission/addRouters'];
+                        let allRouters = store.getters['permission/allRouters'];
+                        // 路由更新
+                        router.options.routes = allRouters;
+                        // 添加动态路由 router.addRoutes(routes: Array<RouteConfig>)
+                        router.addRoutes(addRouters);
+                        next({ ...to, replace: true});
+                        // es6扩展运算符，防止内容发生变化的情况
+                        // replace 不被记录历史记录
+                    })
+                });
+            }else{
+                next();
+            }
+
+             
+            // next();
         }
 
         /**
@@ -40,7 +69,7 @@ router.beforeEach((to, form, next) => {
          */
     }
     // console.log(to)   // 进入的页面 （下一个页面）
-    // console.log(form)   // 离开之前的页面 （上一个）
+    // console.log(from)   // 离开之前的页面 （上一个）
     // console.log(next)
     // next()     
   })

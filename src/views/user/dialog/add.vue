@@ -43,7 +43,7 @@
 </template>
 <script>
 import sha1 from "js-sha1";
-import { GetRole, UserAdd, UserEdit } from "@/api/user";
+import { GetSystem, UserAdd, UserEdit } from "@/api/user";
 import { reactive, ref, watchEffect, watch } from "@vue/composition-api";
 import { stripscript, validateEmail, validatePass, validatePhone, validateTruename } from "@/utils/validate";
 // 组件
@@ -212,11 +212,11 @@ export default {
      * *********************
      * ************** */
     /**
-     * 请求角色
+     * 请求角色 or 系统
      */
-    const getRole = () => {
+    const getSystem = () => {
       // console.log(22222)
-      GetRole().then(response => {
+      GetSystem().then(response => {
         data.roleItem = response.data.data;
         // console.log(response.data.data)
       });
@@ -225,8 +225,8 @@ export default {
      * 弹窗打开,动画结束时
      */
     const openDialog = () => {
-      // 角色请求
-      getRole();
+      // 角色 or 系统请求 
+      getSystem();
       // 初始值处理
       let editData = props.editData;
       // console.log(editData.id)

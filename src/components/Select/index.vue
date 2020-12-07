@@ -27,7 +27,7 @@ export default {
       selectValue: "",
       initOption: [],
       option: [
-        { value: "name", label: "姓名" },
+        { value: "name", label: "姓名" }, 
         { value: "phone", label: "手机号" },
         { value: "email", label: "邮箱" },
         { value: "id", label: "ID" },

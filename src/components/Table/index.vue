@@ -165,12 +165,12 @@ export default {
         pageSize: 10
       })
       data.tableConfig.requestData.data = requestData
-      tableLoadData(data.tableConfig.requestData.data);
-      console.log(data.tableConfig.requestData.data)
+      tableLoadData(data.tableConfig.requestData);
+      // console.log(data.tableConfig.requestData.data)
     }
 
     onBeforeMount(() => {
-      initTableConfig();
+      initTableConfig();``
       tableLoadData(data.tableConfig.requestData);
     });
 

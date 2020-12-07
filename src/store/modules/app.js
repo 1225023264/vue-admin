@@ -9,9 +9,11 @@ const state = {
     username: getUserName() || ''
 
 }
+
 const getters = {
     isCollapse: state => state.isCollapse
 }
+
 const mutations = {// 必须的 同步 没有回调处理事情
     SET_COLLAPSE(state) {
         state.isCollapse = !state.isCollapse;
