@@ -6,12 +6,14 @@ const state = {
     // isCollapse: JSON.parse(Cookie.get('isCollapse')) || false
 
     to_Ken: '',
-    username: getUserName() || ''
+    username: getUserName() || '',
+    roles: []
 
 }
 
 const getters = {
-    isCollapse: state => state.isCollapse
+    isCollapse: state => state.isCollapse,
+    roles: state => state.roles
 }
 
 const mutations = {// 必须的 同步 没有回调处理事情
@@ -27,6 +29,10 @@ const mutations = {// 必须的 同步 没有回调处理事情
     },
     SET_USERNAME(state,value){
         state.username = value
+    },
+    SET_ROLES(state, value){
+        state.roles = value;
+        // console.log(state.roles.role);
     }
 
 }
@@ -59,6 +65,7 @@ const actions = {  // 异步 可以回调处理事情
             removeUserName();
             commit('SET_TOKEN', '');
             commit('SET_USERNAME', '');
+            commit('SET_ROLES', []);
             resolve();
         })
     }

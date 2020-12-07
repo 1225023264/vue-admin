@@ -1,24 +1,18 @@
 import { getUserRole } from "@/api/login";
 import { defaultRouterMap, asnycRouterMap } from "@/router";
 const state = {
-    roles: [],
     allRouters: defaultRouterMap,
     addRouters: [],
 
 }
 
 const getters = {
-    roles: state => state.roles,
     allRouters: state => state.allRouters,  // 所有的
     addRouters: state => state.addRouters   // 匹配的
 
 }
 
 const mutations = {// 必须的 同步 没有回调处理事情
-    SET_ROLES(state, value){
-        state.roles = value;
-        // console.log(state.roles.role);
-    },
     SET_ROUTER(state, router){
         state.addRouters = router;
         state.allRouters = defaultRouterMap.concat(router);
@@ -39,7 +33,7 @@ const actions = {  // 异步 可以回调处理事情
             getUserRole().then(response => {
                 let role = response.data.data;
                 // console.log(response.data.data)
-                commit('SET_ROLES', role);
+                // commit('SET_ROLES', role);
                 // console.log(response.data.data)
                 resolve(role);
             })
