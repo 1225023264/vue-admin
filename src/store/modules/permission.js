@@ -55,15 +55,22 @@ const actions = {  // 异步 可以回调处理事情
             // console.log(data)
             // console.log(defaultRouterMap)
             // console.log(asnycRouterMap)
-            const addRouters = asnycRouterMap.filter(item => {
-                // console.log(item)
-                // es6 includes
-                // [11,22,33].includes(11)
-                if(role.includes(item.meta.system)){
-                    return item;
-                }
+            let addRouters = [];
+            if(role.includes('admin')){
+                addRouters = asnycRouterMap
+            }else{
+                addRouters = asnycRouterMap.filter(item => {
+                    // console.log(item)
+                    // es6 includes
+                    // [11,22,33].includes(11)
+                    if(role.includes(item.meta.system)){
+                        return item;
+                    }
                 
             })
+
+            }
+            
             // 更新路由
             commit('SET_ROUTER', addRouters);
             resolve()
