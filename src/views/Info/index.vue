@@ -60,7 +60,7 @@
         <div class="replace">|</div>
       </el-col>
       <el-col :span="2">
-        <el-button type="danger" class="pull-right" style=" width: 100%;" @click="dialog_info = true">新增</el-button>
+        <el-button type="danger" class="pull-right" style=" width: 100%;" @click="dialog_info = true" v-if="btnPerm('info:add')">新增</el-button>
       </el-col>
     </el-row>
 
@@ -74,11 +74,11 @@
       <el-table-column prop="user" label="管理员" width="115"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="deleteItem(scope.row.id)" v-if="btnPerm('info.delete')">删除</el-button>
-          <el-button type="success" size="mini"  @click="editInfo(scope.row.id)" v-if="btnPerm('info.edit')">编辑</el-button>
+          <el-button type="danger" size="mini" @click="deleteItem(scope.row.id)" v-if="btnPerm('info:del')">删除</el-button>
+          <el-button type="success" size="mini"  @click="editInfo(scope.row.id)" v-if="btnPerm('info:edit')">编辑</el-button>
           <!-- <router-link :to="{name: 'InfoDetailed', query:{ id: scope.row.id, title: scope.row.title  }}" class="margin-left-10"> -->
           
-          <el-button type="success" size="mini" @click="detailed(scope.row)" v-if="btnPerm('info.edit')">编辑详情</el-button>
+          <el-button type="success" size="mini" @click="detailed(scope.row)" v-if="btnPerm('info:detailed')">编辑详情</el-button>
 
           <!-- </router-link> -->
         </template>
@@ -88,7 +88,7 @@
     <!-- 底部分页 -->
     <el-row>
       <el-col :span="12">
-        <el-button size="medium" @click="deleteAll">批量删除</el-button>
+        <el-button size="medium" @click="deleteAll" v-if="btnPerm('info:batchDel')">批量删除</el-button>
       </el-col>
       <el-col :span="12">
         <el-pagination

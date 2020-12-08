@@ -105,7 +105,7 @@ export const asnycRouterMap = [
         path: "/infoCategory",
         name: "InfoCategory",
         meta: {
-          role:['sale'],
+          role:['sale', 'manager'],
           name: "信息分类"
         },
         component: () => import("../views/Info/category.vue")
@@ -115,7 +115,7 @@ export const asnycRouterMap = [
         name: "InfoDetailed",
         hidden: true,
         meta: {
-          role:['sale'],
+          role:['sale', 'manager'],
           name: "信息详情"
         },
         component: () => import("../views/Info/detailed.vue")
@@ -129,7 +129,7 @@ export const asnycRouterMap = [
     path: "/user",
     name: "User",
     meta: {
-      role:['sale'],
+      role:['sale', 'manager'],
       system: 'userSystem',
       name: "用户管理",
       icon: 'user'
@@ -140,7 +140,7 @@ export const asnycRouterMap = [
         path: "/userIndex",
         name: "UserIndex",
         meta: {
-          role:['sale'],
+          role:['sale', 'manager'],
           name: "用户列表"
         },
         component: () => import("../views/User/index.vue")

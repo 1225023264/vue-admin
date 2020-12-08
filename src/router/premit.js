@@ -30,9 +30,10 @@ router.beforeEach((to, from, next) => {
 
                     let role = response.role;
                     let button = response.button;
+                    let btnPerm = response.btnPerm;
                     // console.log(role)
                     store.commit('app/SET_ROLES', role);
-                    store.commit('app/SET_BUTTON', button);
+                    store.commit('app/SET_BUTTON', btnPerm);
                     // console.log(response)
                     store.dispatch('permission/createRouter', role).then(response => {
                         let addRouters = store.getters['permission/addRouters'];

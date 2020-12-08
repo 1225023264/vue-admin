@@ -34,13 +34,15 @@
           <el-checkbox v-for="item in data.roleItem" :key="item.role" :label="item.role" >{{ item.name }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item label="按钮权限：" :label-width="data.formLabelWidth" prop="btnPerm">
+      <el-form-item label="按钮权限：" :label-width="data.formLabelWidth">
         <template v-if="data.btnPerm.length > 0">
           <div v-for="item in data.btnPerm">
             <h4> {{ item.name }}</h4>
-              <!-- <el-checkbox-group v-model="data.form.btnPerm">
-                <el-checkbox v-for="item in data.roleItem" :key="item.role" :label="item.role" >{{ item.name }}</el-checkbox>
-              </el-checkbox-group> -->
+            <template v-if="item.perm && item.perm.length > 0">
+              <el-checkbox-group v-model="data.form.btnPerm">
+                <el-checkbox v-for="buttons in item.perm" :key="buttons.value" :label="buttons.value" >{{ buttons.name }}</el-checkbox>
+              </el-checkbox-group>
+            </template>
           </div>
         </template>
       </el-form-item>
@@ -247,20 +249,23 @@ export default {
       let editData = props.editData;
       // console.log(editData.id)
       if(editData.id) { // 编辑
-        editData.role = editData.role.split(','); // 数组
+        editData.role = editData.role ? editData.role.split(',') : []; // 数组
+        editData.btnPerm = editData.btnPerm ? editData.btnPerm.split(',') : []; // 数组
+        
+        // 循环JSON对象
+        for(let key in editData) {
+          data.form[key] = editData[key]
+          // console.log(key +":"+ editData[key])
+        }
+
       }else{ // 添加
         data.form.id && delete data.form.id
       }
 
-      // 循环JSON对象
-      for(let key in editData) {
-        data.form[key] = editData.id ? editData[key] : ""
-        // console.log(key +":"+ editData[key])
-      }
       // console.log(data.form)
       // data.form = editData;
       // console.log('props.editData')
-      console.log(props.editData)
+      // console.log(props.editData)
     };
 
     /**
@@ -273,7 +278,7 @@ export default {
     };
 
     const resetForm = () => {
-      console.log(data.cityPickerData);
+      // console.log(data.cityPickerData);
       data.cityPickerData = {};
       refs.addInfoForm.resetFields();
     };
@@ -318,6 +323,7 @@ export default {
               // let requestData = JSON.parse(JSON.stringify(data.form));
               let requestData = Object.assign({}, data.form);
               requestData.role = requestData.role.join();     //  数组转字符串， 默认以，号隔开
+              requestData.btnPerm = requestData.btnPerm.join();     //  数组转字符串， 默认以，号隔开
               requestData.region = JSON.stringify(data.cityPickerData);
 
               // console.log(requestData)
