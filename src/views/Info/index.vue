@@ -63,8 +63,8 @@
         <el-button type="danger" class="pull-right" style=" width: 100%;" @click="dialog_info = true" v-if="btnPerm('info:add')">新增</el-button>
       </el-col>
     </el-row>
-
-    <!-- 表格数据-->
+    
+    <!-- 表格数据 数据驱动视图 -->
     <div class="black-space-30"></div>
     <el-table :data="table_data.item" border v-loading="loadingData" @selection-change="handleSelectionChange" style="width: 100%">
       <el-table-column type="selection" width="45"></el-table-column>
@@ -74,11 +74,12 @@
       <el-table-column prop="user" label="管理员" width="115"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="deleteItem(scope.row.id)" v-if="btnPerm('info:del')">删除</el-button>
-          <el-button type="success" size="mini"  @click="editInfo(scope.row.id)" v-if="btnPerm('info:edit')">编辑</el-button>
+          <el-button type="danger" size="mini" v-btnPerm="'info:del'" class="hiden-button">自定义指令测试</el-button>
+          <el-button type="danger" size="mini" @click="deleteItem(scope.row.id)" v-btnPerm="'info:del'" class="hiden-button">删除</el-button>
+          <el-button type="success" size="mini" @click="editInfo(scope.row.id)" v-btnPerm="'info:edit'" class="hiden-button">编辑</el-button>
           <!-- <router-link :to="{name: 'InfoDetailed', query:{ id: scope.row.id, title: scope.row.title  }}" class="margin-left-10"> -->
           
-          <el-button type="success" size="mini" @click="detailed(scope.row)" v-if="btnPerm('info:detailed')">编辑详情</el-button>
+          <el-button type="success" size="mini" @click="detailed(scope.row)" v-btnPerm="'info:detailed'" class="hiden-button">编辑详情</el-button>
 
           <!-- </router-link> -->
         </template>
@@ -373,4 +374,8 @@ export default {
 .replace {
   color: transparent;
 }
+</style>
+<style>
+button.hiden-button { display: none;}
+button.show-button { display: inline-block;}
 </style>

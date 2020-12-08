@@ -142,6 +142,10 @@ export default {
         }
       }
     };
+    // 渲染完成时
+    // this.$nextTick(() => {
+    //   console.log();
+    // })
 
     // 勾选CheckBox时触发
     const thatSelectCheckbox = (val) => {

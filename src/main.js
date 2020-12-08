@@ -13,12 +13,16 @@ import "./router/premit";
 
 // 自定义全局组件
 import "./icons";
-// 引入按钮权限
+// 全局方法引入按钮权限
 import { buttonPermission} from "./utils/buttonPermission";
 Vue.prototype.btnPerm = buttonPermission;
+// 自定义指令按钮权限
+import "./utils/buttonPerm";
+
 // Vue.use(global);
 Vue.use(ElementUI);
 Vue.use(VueCompositionApi);
+
 Vue.config.productionTip = false;
 
 // runtime模式（运行时）
