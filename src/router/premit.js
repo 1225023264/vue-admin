@@ -25,9 +25,11 @@ router.beforeEach((to, from, next) => {
              * roles[]
              */
             if(store.getters['app/roles'].length === 0){
+                // console.log()
                 store.dispatch('permission/getRoles').then(response => {
 
                     let role = response.role;
+                    // console.log(role)
                     store.commit('app/SET_ROLES', role);
                     // console.log(response)
                     store.dispatch('permission/createRouter', role).then(response => {

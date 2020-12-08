@@ -74,6 +74,7 @@ export default new Router({
 
 /**
  * 动态路由
+ * 角色： sale, manager, technician
  */
 export const asnycRouterMap = [
 
@@ -84,6 +85,7 @@ export const asnycRouterMap = [
     path: "/info",
     name: "Info",
     meta: {
+      role:['sale', 'manager', 'technician'],
       system: 'infoSystem', // 自定义key
       name: "信息管理",
       icon: 'info'
@@ -94,6 +96,7 @@ export const asnycRouterMap = [
         path: "/infoIndex",
         name: "InfoIndex",
         meta: {
+          role:['sale', 'manager'],
           name: "信息列表"
         },
         component: () => import("../views/Info/index.vue")
@@ -102,6 +105,7 @@ export const asnycRouterMap = [
         path: "/infoCategory",
         name: "InfoCategory",
         meta: {
+          role:['sale'],
           name: "信息分类"
         },
         component: () => import("../views/Info/category.vue")
@@ -111,6 +115,7 @@ export const asnycRouterMap = [
         name: "InfoDetailed",
         hidden: true,
         meta: {
+          role:['sale'],
           name: "信息详情"
         },
         component: () => import("../views/Info/detailed.vue")
@@ -124,6 +129,7 @@ export const asnycRouterMap = [
     path: "/user",
     name: "User",
     meta: {
+      role:['sale'],
       system: 'userSystem',
       name: "用户管理",
       icon: 'user'
@@ -134,6 +140,7 @@ export const asnycRouterMap = [
         path: "/userIndex",
         name: "UserIndex",
         meta: {
+          role:['sale'],
           name: "用户列表"
         },
         component: () => import("../views/User/index.vue")

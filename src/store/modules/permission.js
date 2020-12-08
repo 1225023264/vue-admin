@@ -1,5 +1,29 @@
 import { getUserRole } from "@/api/login";
 import { defaultRouterMap, asnycRouterMap } from "@/router";
+
+function hasPremission(roles, router){
+    if(router.meta && router.meta.role){
+        return roles.some(item => router.meta.role.indexOf(item) >= 0) 
+    }
+
+
+    // indexOf 对大小写敏感
+    // let str = 'aaa Abc';
+    
+    // str.indexOf('aaa')  // 0
+    // str.indexOf('abc')  // -1
+    // str.indexOf('Abc')  // 4
+
+
+    // console.log(roles)
+    // console.log(router.meta.role)
+    
+    // [11,22,33].includes('11') 处理一维数组，二维数组就无法处理了
+    // [11,22,33].some(item => item = 22 )
+    // 用户角色：["technician", "sale", "manager"]
+    // 路由配置：["sale"]
+
+}
 const state = {
     allRouters: defaultRouterMap,
     addRouters: [],
@@ -32,7 +56,7 @@ const actions = {  // 异步 可以回调处理事情
         return new Promise((resolve, reject) => {
             getUserRole().then(response => {
                 let role = response.data.data;
-                // console.log(response.data.data)
+                // console.log(response.data.data.role)
                 // commit('SET_ROLES', role);
                 // console.log(response.data.data)
                 resolve(role);
@@ -43,26 +67,32 @@ const actions = {  // 异步 可以回调处理事情
      * 创建动态路由
      */
     createRouter({ commit }, data){
+        // console.log(data)
         return new Promise((resolve, reject) => {
             // ["userSystem", "infoSystem", __ob__: Observer]
             let role = data;
             // console.log(data)
             // console.log(defaultRouterMap)
             // console.log(asnycRouterMap)
+            // 超管的状态
             let addRouters = [];
             if(role.includes('admin')){
                 addRouters = asnycRouterMap
-            }else{
+            }else{  //普通管理员
                 addRouters = asnycRouterMap.filter(item => {
-                    // console.log(item)
-                    // es6 includes
-                    // [11,22,33].includes(11)
-                    if(role.includes(item.meta.system)){
+                    if(hasPremission(role, item)){
+                        // 优先判断
+                        if(item.children && item.children.length > 0) {
+                            item.children = item.children.filter(child => {
+                                if(hasPremission(role, child)){
+                                    return child;
+                                }
+                            })
+                            return item;
+                        }
                         return item;
                     }
-                
-            })
-
+                })
             }
             
             // 更新路由
@@ -78,5 +108,5 @@ export default {
     state,
     getters,
     mutations,
-    actions
-};
+    actions,
+}
