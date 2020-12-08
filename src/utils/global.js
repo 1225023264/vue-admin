@@ -1,6 +1,7 @@
 import { MessageBox } from "element-ui";
 export default {
     install(Vue, options) {
+        // 注册全局方法
         Vue.prototype.confirm = (params) => {  // 箭头函数的方法写的    function () {}
             MessageBox.confirm(params.content, params.tip || '提示', {
                 confirmButtonText: '确定',

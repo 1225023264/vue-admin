@@ -7,13 +7,15 @@ const state = {
 
     to_Ken: '',
     username: getUserName() || '',
-    roles: []
+    roles: [],
+    buttonPermission:[],
 
 }
 
 const getters = {
     isCollapse: state => state.isCollapse,
-    roles: state => state.roles
+    roles: state => state.roles,
+    buttonPermission: state => state.buttonPermission
 }
 
 const mutations = {// 必须的 同步 没有回调处理事情
@@ -33,6 +35,10 @@ const mutations = {// 必须的 同步 没有回调处理事情
     SET_ROLES(state, value){
         state.roles = value;
         // console.log(state.roles.role);
+    },
+    SET_BUTTON(state, value){
+        state.buttonPermission = value;
+        // console.log(state.buttonPermission);
     }
 
 }

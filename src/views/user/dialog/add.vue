@@ -29,10 +29,20 @@
         <el-radio v-model="data.form.status" label="1">禁用</el-radio>
         <el-radio v-model="data.form.status" label="2">启用</el-radio>
       </el-form-item>
-      <el-form-item label="角色：" :label-width="data.formLabelWidth" prop="role">
+      <el-form-item label="角色权限：" :label-width="data.formLabelWidth" prop="role">
         <el-checkbox-group v-model="data.form.role">
           <el-checkbox v-for="item in data.roleItem" :key="item.role" :label="item.role" >{{ item.name }}</el-checkbox>
         </el-checkbox-group>
+      </el-form-item>
+      <el-form-item label="按钮权限：" :label-width="data.formLabelWidth" prop="btnPerm">
+        <template v-if="data.btnPerm.length > 0">
+          <div v-for="item in data.btnPerm">
+            <h4> {{ item.name }}</h4>
+              <!-- <el-checkbox-group v-model="data.form.btnPerm">
+                <el-checkbox v-for="item in data.roleItem" :key="item.role" :label="item.role" >{{ item.name }}</el-checkbox>
+              </el-checkbox-group> -->
+          </div>
+        </template>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -43,7 +53,7 @@
 </template>
 <script>
 import sha1 from "js-sha1";
-import { GetRole, GetSystem, UserAdd, UserEdit } from "@/api/user";
+import { GetRole, GetSystem, GetPermButton, UserAdd, UserEdit } from "@/api/user";
 import { reactive, ref, watchEffect, watch } from "@vue/composition-api";
 import { stripscript, validateEmail, validatePass, validatePhone, validateTruename } from "@/utils/validate";
 // 组件
@@ -172,7 +182,8 @@ export default {
         phone: "",
         region: "",
         status: "2",
-        role: []
+        role: [],
+        btnPerm:[]
       },
       // 表单的验证
       rules: reactive({
@@ -200,6 +211,8 @@ export default {
     }),
       // 角色选项
       roleItem: [],
+      // 按钮权限
+      btnPerm: [],
       // 按钮加载
       submitLoading: false
     });
@@ -219,6 +232,9 @@ export default {
       GetRole().then(response => {
         data.roleItem = response.data.data;
         // console.log(response.data.data)
+      });
+      GetPermButton().then(response => {
+        data.btnPerm = response.data.data;
       });
     };
     /**

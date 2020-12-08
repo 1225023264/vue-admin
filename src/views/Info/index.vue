@@ -74,11 +74,11 @@
       <el-table-column prop="user" label="管理员" width="115"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="deleteItem(scope.row.id)">删除</el-button>
-          <el-button type="success" size="mini"  @click="editInfo(scope.row.id)">编辑</el-button>
+          <el-button type="danger" size="mini" @click="deleteItem(scope.row.id)" v-if="btnPerm('info.delete')">删除</el-button>
+          <el-button type="success" size="mini"  @click="editInfo(scope.row.id)" v-if="btnPerm('info.edit')">编辑</el-button>
           <!-- <router-link :to="{name: 'InfoDetailed', query:{ id: scope.row.id, title: scope.row.title  }}" class="margin-left-10"> -->
           
-          <el-button type="success" size="mini" @click="detailed(scope.row)">编辑详情</el-button>
+          <el-button type="success" size="mini" @click="detailed(scope.row)" v-if="btnPerm('info.edit')">编辑详情</el-button>
 
           <!-- </router-link> -->
         </template>

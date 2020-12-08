@@ -13,6 +13,17 @@ export function GetRole(data = {}) {        // es6写法可以直接定义默认
 /**
  * 系统列表
  */
+export function GetPermButton(data = {}) {        // es6写法可以直接定义默认参数 data = {}, aaa = 111 
+    return service.request({
+        method: "post",
+        url: "/permButton/",
+        data
+    })
+}
+
+/**
+ * 系统列表
+ */
 export function GetSystem(data = {}) {        // es6写法可以直接定义默认参数 data = {}, aaa = 111 
     return service.request({
         method: "post",

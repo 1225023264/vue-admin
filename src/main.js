@@ -13,7 +13,9 @@ import "./router/premit";
 
 // 自定义全局组件
 import "./icons";
-
+// 引入按钮权限
+import { buttonPermission} from "./utils/buttonPermission";
+Vue.prototype.btnPerm = buttonPermission;
 // Vue.use(global);
 Vue.use(ElementUI);
 Vue.use(VueCompositionApi);
