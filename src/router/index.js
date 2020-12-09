@@ -62,7 +62,27 @@ export const defaultRouterMap = [
         component: () => import("../views/Console/index.vue")
       }
     ]
-  }
+  },
+  // 404 页面
+  {
+    path: "/page404",
+    meta: {
+      name: "404",
+      icon: '404'
+    },
+    hidden: true,
+    component: Layout,
+    children: [
+      {
+        path: "/404",
+        meta: {
+          name: "404"
+        },
+        component: () => import("../views/404.vue")
+      }
+    ]
+  },
+  { path: "*", redirect: "/404", hidden: true }
 ]
 
 
@@ -96,6 +116,7 @@ export const asnycRouterMap = [
         path: "/infoIndex",
         name: "InfoIndex",
         meta: {
+          keepAlive: true,
           role:['sale', 'manager'],
           name: "信息列表"
         },
@@ -105,6 +126,7 @@ export const asnycRouterMap = [
         path: "/infoCategory",
         name: "InfoCategory",
         meta: {
+          keepAlive: true,
           role:['sale', 'manager'],
           name: "信息分类"
         },
@@ -115,6 +137,7 @@ export const asnycRouterMap = [
         name: "InfoDetailed",
         hidden: true,
         meta: {
+          keepAlive: true,
           role:['sale', 'manager'],
           name: "信息详情"
         },
@@ -140,6 +163,7 @@ export const asnycRouterMap = [
         path: "/userIndex",
         name: "UserIndex",
         meta: {
+          keepAlive: true,
           role:['sale', 'manager'],
           name: "用户列表"
         },

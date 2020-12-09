@@ -35,7 +35,7 @@
 <script>
 import { GetList, EdidInfo } from "@/api/news";
 import { timestampToTime } from "@/utils/common";
-import { reactive, ref, watch, onMounted } from "@vue/composition-api";
+import { reactive, ref, watch, onMounted, onActivated, onDeactivated } from "@vue/composition-api";
 // 组件
 import UploadImg from "@c/UploadImg";
 // 富文本编辑器
@@ -142,12 +142,23 @@ export default {
     };
 
     /**
-     * 生命周期
+     * 生命周期 2.0 created > mounted > activated    
+     *         3.0  onMounted > onActivated(进入页面)(可以控制页面局部刷新) > onDeactivated(离开页面)
      */
     onMounted(() => {
       getInfoCategory();
-      getInfo();
     });
+
+    onActivated(() => {
+      data.id= root.$route.params.id || root.$store.getters["infoDetailed/infoId"];
+      // console.log(root.$route.params.id || root.$store.getters["infoDetailed/infoId"]);
+      getInfo();
+    })
+
+    onDeactivated(() => {
+      // console.log(1111111);
+    })
+
     return {
       data,
       form,

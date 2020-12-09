@@ -65,7 +65,7 @@ export default {
       dialog_edit: false,
       editData: {},
       configOption: {
-        init: ["name", "phone"]
+        init: ["truename", "phone"]
       },
       // 下拉菜单的数据
       selectData: {},

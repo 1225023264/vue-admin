@@ -2,7 +2,7 @@
   <div id="nav-wrap">
     <h1 class="logo"><img src="../../../assets/logo.png" alt=""></h1>
     <el-menu
-      default-active="1-4-1"
+      :default-active="defalutAction"
       class="el-menu-vertical-demo"
       :collapse="isCollapse"
       background-color="transparent"
@@ -41,6 +41,15 @@ export default {
     // const isCollapse = ref(false);
     const routers = reactive(root.$router.options.routes);
     /**
+     * 监听路由变化 defalutAction 与 path 值对应
+     */
+    const defalutAction = computed(() => {
+      const route = root.$route;
+      const { path } = route;
+      // console.log(route.path)
+      return path;
+    })
+    /**
      * computed 监听
      */
     
@@ -49,7 +58,8 @@ export default {
 
     return {
       isCollapse,
-      routers
+      routers,
+      defalutAction
     };
   }
 };

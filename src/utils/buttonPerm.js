@@ -19,7 +19,11 @@ Vue.directive("btnPerm",{
     upbind:function(){},
     hasBtnPerm: function(permission){
         const button = store.getters["app/buttonPermission"];   // 请求到的数据权限
-        return button.indexOf(permission) != -1; //
+        const roles = store.getters["app/roles"];   // 获取角色
+        // console.log(roles);
+        // 如果是超级管理员
+        if(roles.includes("admin")) { return true }
+        return button.indexOf(permission) != -1;    //
     }
 })
   

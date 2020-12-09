@@ -5,7 +5,7 @@ import { getToken, getUserName } from "@/utils/app";
 // 创建axios，赋给变量service
 // http://www.web-jshtml.cn/productApi
 
-const BASEURL = process.env.NODE_ENV === 'production' ? '' : '/devApi';
+const BASEURL = process.env.NODE_ENV === 'production' ? zrpocess.env.VUE_APP_API : process.env.VUE_APP_API;
 const service = axios.create({
   baseURL: BASEURL,     // http://www.web-jshtml.cn/productApi
   timeout: 15000,    // 超时

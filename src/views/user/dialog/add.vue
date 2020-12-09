@@ -231,13 +231,27 @@ export default {
      */
     const getRole = () => {
       // console.log(22222)
-      GetRole().then(response => {
-        data.roleItem = response.data.data;
-        // console.log(response.data.data)
-      });
-      GetPermButton().then(response => {
-        data.btnPerm = response.data.data;
-      });
+      // console.log(data.roleItem);
+      // console.log(data.btnPerm);
+      // if(data.roleItem.length > 0 && data.btnPerm.length > 0) { return false } 
+      // GetRole().then(response => {
+      //   data.roleItem = response.data.data;
+      //   // console.log(response.data.data)
+      // });
+      // GetPermButton().then(response => {
+      //   data.btnPerm = response.data.data;
+      // });
+      if(data.roleItem.length === 0){
+        GetRole().then(response => {
+          data.roleItem = response.data.data;
+          // console.log(response.data.data)
+        });
+      }
+      if(data.btnPerm.length === 0){
+        GetPermButton().then(response => {
+          data.btnPerm = response.data.data;
+        });
+      }
     };
     /**
      * 弹窗打开,动画结束时

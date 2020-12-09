@@ -2,7 +2,14 @@
   <div id="main-wrap">
     <div class="main-context">
       <div class="context">
-        <router-view />
+        <!-- 子路由显示区 -->   
+        <!--  include只缓存名称匹配的组件 exclude不缓存名称匹配的组件 max 数字最多缓存多少组件实例 -->
+        <keep-alive exclude="infoIndex">
+          <!-- 需要缓存 -->
+          <router-view v-if="$route.meta.keepAlive"/>
+        </keep-alive>
+        <!-- 不需要缓存 -->
+        <router-view v-if="!$route.meta.keepAlive"/>
       </div>
     </div>
   </div>
