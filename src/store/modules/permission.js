@@ -78,10 +78,10 @@ const actions = {  // 异步 可以回调处理事情
             let addRouters = [];
             if(role.includes('admin')){
                 addRouters = asnycRouterMap
-            }else{  //普通管理员
+            }else{  //  普通管理员
                 addRouters = asnycRouterMap.filter(item => {
                     if(hasPremission(role, item)){
-                        // 优先判断
+                        //  优先判断
                         if(item.children && item.children.length > 0) {
                             item.children = item.children.filter(child => {
                                 if(hasPremission(role, child)){
@@ -93,6 +93,8 @@ const actions = {  // 异步 可以回调处理事情
                         return item;
                     }
                 })
+                // [11, 22, 33, 44]    // 4 - 1 = xxxx[3]
+                addRouters.push(asnycRouterMap[asnycRouterMap.length - 1]);
             }
             
             // 更新路由

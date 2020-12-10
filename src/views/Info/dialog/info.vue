@@ -124,10 +124,10 @@ export default {
           type: 'success'
         })
         data.submitLoading = false
+        // 关闭弹窗
+        close()
         // 刷新表单
         emit("getListAdd");
-        // 重置表单
-        resetForm()
         // root.$refs['addInfoForm'].resetFields();
       }).catch(error => {
         data.submitLoading = false

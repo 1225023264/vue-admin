@@ -313,10 +313,20 @@ export default {
       if(!categoryData){ return false; }
       return categoryData.category_name;
     }
+
     const handleSelectionChange = (val) =>{
       let id = val.map(item => item.id);
       deleteInfoId.value = id
     }
+    /**
+     * 阻塞、BUG导致整个业务流程不能进行，这个BUG
+     * 
+     */
+
+
+
+
+
     /**
      * 生命周期
      */

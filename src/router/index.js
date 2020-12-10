@@ -81,8 +81,7 @@ export const defaultRouterMap = [
         component: () => import("../views/404.vue")
       }
     ]
-  },
-  { path: "*", redirect: "/404", hidden: true }
+  }
 ]
 
 
@@ -170,7 +169,8 @@ export const asnycRouterMap = [
         component: () => import("../views/User/index.vue")
       }
     ]
-  }
+  },
+  { path: "*", redirect: "/404", hidden: true }
 ]
 
 
